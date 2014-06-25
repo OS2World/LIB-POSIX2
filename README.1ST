@@ -1,0 +1,35 @@
+[$Header: /cvsroot/posix2/posix2/README.1ST,v 1.8 2000/11/25 16:33:35 arnd Exp $]
+
+This is the current alpha-level release of the POSIX/2 distribution. It is 
+not stable. Don't use in production environments without extensive tests.
+Check out for the latest version which is available via CVS.
+
+
+Details can be found on our homepage 
+
+  http://posix2.sourceforge.net
+
+
+Read CVSPROBLEM if you have a problem with cvs, especially if have 
+updated the archive through anonymous CVS on OS/2 and have text 
+files in a strange format.
+
+
+Check out the various subdirectories, especially libext and tools.
+Just cd to tools/ and hit 'x11make'. That should do the trick and build
+everything. Pls report any problems to the posix2 mailing list. 
+
+Make sure to read all (well, almost :-) docs in libext/docs, including 
+tools.txt and FAQ*.
+
+Thank you.
+
+Short explanation:
+
+ libext/  our extension library for EMX
+ tools/   tools required for building stuff from *BSD
+          example programs from *BSD
+ usr/     stuff from *BSD /usr (e.g. data files)
+
+
+More info: libext/README

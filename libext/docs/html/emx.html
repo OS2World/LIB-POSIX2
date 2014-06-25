@@ -1,0 +1,532 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<LINK REV=MADE HREF="mailto:editor@edm2.com">
+<TITLE>EDM/2 - Installing EMX</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#CC0000" VLINK="#993333" BGCOLOR="#FFFBFB"
+  BACKGROUND="../common/images/bg.gif">
+
+<!-- ====================================================== -->
+<!--                           Map                          -->
+<!-- ====================================================== -->
+<MAP NAME="Linkbar">
+<AREA ALT="Feedback" COORDS="190,1,260,14"
+   HREF="mailto:feedback@edm2.com">
+<AREA ALT="Search" COORDS="280,1,335,14"
+   HREF="../common/search.html">
+<AREA ALT="Top" COORDS="355,1,390,14"
+   HREF="../index.html">
+<AREA ALT="Backward" COORDS="400,1,475,14"
+   HREF="qa.html">
+<AREA ALT="Forward" COORDS="490,1,550,14"
+   HREF="minesweeper.html">
+</MAP>
+
+<TABLE WIDTH="100%">
+<TR>
+<TD VALIGN=TOP WIDTH="15%">
+<IMG BORDER=0 WIDTH=56 HEIGHT=18 ALT="EDM/2"
+  HSPACE=10 SRC="../common/images/edm2sm.gif">
+</TD>
+<TD WIDTH="85%">
+
+<H2>Installing EMX</H2>
+
+<P>Written by <A HREF="../common/authors/banderson.html">Brooke Anderson</A>
+
+</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="" USEMAP="#Linkbar"
+   SRC="../common/images/articlebar.gif">
+
+<P><TABLE WIDTH="100%">
+<TR>
+<TD WIDTH="10%">&nbsp;</TD>
+<TD WIDTH="80%">
+
+<H2>A Free C Compiler for OS/2 2.0</H2>
+
+<P>(Note:  This document was originally written by Brooke P. Anderson.  It has been
+modified slightly to conform to the .INF format.  The original may be obtained
+from the same source as EMX itself.)
+
+<P>[And now it is in HTML.. -- Ed]
+
+<P><H2>Introduction</H2>
+
+<P>This document describes a free GNU software-development system for OS/2 v2.0.
+It tells you how to acquire all of the necessary software, how to install it,
+how to start using it, and where to look for more information.
+
+<P>The GNU software-development system includes a C and C++ compiler, a debugger,
+an assembler, a make utility (for automating the compilation of programs made of
+many source files), and a hypertext reader (for reading the documentation).  The
+compiler generates full 32-bit optimized code, and it supports all of the OS/2
+API calls, so you software developers out there can use it for PM programming,
+manipulating semaphores, manipulating threads, using named pipes, etc.  Optional
+packages include curses (a standard library for manipulating screen-fulls of text
+and for moving the cursor), a collection of sample programs, and full source
+code for the system.
+
+<P>GNU software is originally developed by the Free Software Foundation, an
+organization which produces a lot of free software for UNIX.  After the Free
+Software Foundation releases the UNIX versions, people often port them to many
+other operation systems (such as OS/2).  Despite the fact that the software is
+free, the UNIX community considers it a standard and often prefers it over other
+products because of its high quality.  The compilers, for example, produce
+well-optimized code.
+
+<P>Sometimes, there is more than one port of a GNU program.  For OS/2, there are
+two different ports of the GNU compiler (called "gcc").  This document discusses
+only one of them (the EMX port) since the EMX port provides faster floating
+point routines and works with a debugger.  This document deals with version 0.8f
+of the EMX port, which is the latest version.  People frequently produce new
+versions of and enhancements for the GNU software and the ports based on it.
+
+<P>IMPORTANT:  I have not tested the software on FAT file systems.  I think it will
+work, but I have not checked all of the file names to make sure they comply with
+the egregious 8.3 file-naming convention.
+
+<P><H2>How to Get EMX</H2>
+
+<P>The full software-development system (and the various optional packages
+described later in this document) are available from a variety of sources.  If
+you have access to Internet, you can get the files from anonymous ftp sites.  In
+the USA, the main anonymous ftp site for OS/2 is ftp-os2.nmsu.edu.  In Germany,
+the main anonymous ftp site for OS/2 is rusinfo.rus.uni-stuttgart.de.  Also, see
+the end of this document for a list of people who are willing to distribute the
+whole system through regular mail.
+
+<P>You need to obtain the following files (the sizes of the files are listed next
+to the names):  emxdev.zip (620k), gnudev.zip (873k), gppdev.zip (944k),
+gobjcdev.zip (426k), gnumk362.zip (255k), whlinf8f.zip (814k), and unz50x32.exe
+(114k).  This file (emxst31.doc) is available in emxst31.zip (10k).
+
+<P>On ftp-os2.nmsu.edu, these files are available in
+pub/os2/2.0/programming/emx-0.8f -- except for emxst31.zip, whlinf8f.zip, and
+the correct version of gnumk362.zip, which are temporarily in pub/uploads.  On
+rusinfo.rus.uni-stuttgart.de, check in pub/os2/emx-0.8f.
+
+<P><H2>How to Install EMX</H2>
+
+<P>The following subsections describe how to install the various pieces of the GNU
+software-development system.  Go through the procedures step by step as
+described - the order is important.  Don't feel compelled to read through any of
+the readme files or other documentation spit out during the unarchiving process
+- I think you will have a much easier time if you go through this document
+beforehand.
+
+<P><H2>UNZ50x32.EXE</H2>
+
+<P>You will need unzip v5.0 to unarchive the files.  Earlier versions of unzip
+(including PKZip versions earlier than 1.9) will not work.
+
+<P>To unarchive unz50x32.exe, you simply move it to a convenient directory and type
+"unz50x32".  Add the name of the directory unzip is in to your path.  For
+example, I have unzip in c:\apps\unzip, so I appended "c:\apps\unzip;" to the
+"SET PATH" statement in my config.sys file.  Then reboot.  Now, you can
+unarchive any zip archive by typing "unzip filename", where "filename.zip" is
+the name of the archive.
+
+<P><H2>WHLINF8F.ZIP</H2>
+
+<P>Copy whlinf8f.zip to any convenient directory and unarchive it.  It will
+disgorge a program called "info.exe" (the hypertext reader), several auxiliary
+files, and a bunch of documentation files for itself, the compiler, the
+debugger, and make.
+
+<P><H2>GNUMK362.ZIP</H2>
+
+<P>Copy gnumk362.zip to any convenient directory and unarchive it.  The archive
+will create the directory ".\make" and disgorge several files into it.  In other
+words, if you unarchive gnumk362.zip in the directory "\apps", the process will
+create the directory "\apps\make".  You can delete the info directory (the one
+in the make directory) as its contents are duplicated in whlinf8f.zip.
+
+<P>Add the name of the directory make is in to your path statement in config.sys.
+(I have make in c:\apps\make, so I appended "c:\apps\make;" to the "SET PATH"
+statement in my config.sys.)
+
+<P><H2>GNUDEV.ZIP, EMXDEV.ZIP, GPPDEV.ZIP, and OBJCDEV.ZIP</H2>
+
+<P>These archives create the directory ".\emx" and a bunch of directories under
+that.  Thus, unarchive the files from the directory in which you want this emx
+directory.  (In other words, if you unarchive gnudev.zip in the directory
+"\apps", the process will create \apps\emx, \apps\emx\bin, \apps\emx\lib, and
+many other such directories.)
+
+<P><H2>The Final Steps</H2>
+
+<P>Now, you need to modify your config.sys file.  The examples below are from my
+config.sys file, and I have the emx directory installed under c:\apps.  Thus, my
+system has the directories "c:\apps\emx\dll", "c:\apps\emx\lib",
+"c:\apps\emx\include", "c:\apps\emx\bin", and so on -- you will need to modify
+the following examples so that the directories are specified correctly.
+
+<P>First, you need to specify in your libpath the location of emx.dll and other DLL
+files.  In my config.sys, I have
+
+<P><FONT SIZE=2>
+LIBPATH=.;C:\OS2\DLL;C:\OS2\MDOS;C:\; C:\OS2\APPS\DLL;c:\apps\emx\dll;
+</FONT>
+
+<P>Second, add the name of the emx\bin directory to your path statement in
+config.sys.  (I appended "c:\apps\emx\bin;" to the "SET PATH" statement in my
+config.sys.)
+
+<P>Third, you need to set a few environmental variables so that the compiler knows
+where to find and how to use various files:
+
+<P><FONT SIZE=2>
+set C_INCLUDE_PATH=c:/apps/emx/include<BR>
+set LIBRARY_PATH=c:/apps/emx/lib<BR>
+set CPLUS_INCLUDE_PATH=C:/apps/emx/include.cpp;C:/apps/emx/include<BR>
+set PROTODIR=c:/apps/emx/include.cpp/gen<BR>
+set OBJC_INCLUDE_PATH=c:/apps/emx/include<BR>
+set TERM=mono<BR>
+set TERMCAP=c:/apps/emx/etc/termcap.dat<BR>
+</FONT>
+
+<P>IMPORTANT:  you need to use forward slashes ("/") and not backward slashes ("\")
+when setting these environmental variables.  However, do NOT use forward slashes
+in your libpath statement.
+
+<P>Now, reboot your machine so that these definitions take effect.  Then, go into
+an OS/2 window and type "cd \apps\emx\lib" (or whatever you would type to get to
+emx\lib), and type "omflib".  This completes the installation process.
+
+<P><H2>Using Info</H2>
+
+<P>Go into the directory in which info.exe resides.  Type "info".  You are now
+looking at a screen that has some information on the top half (information such
+as "Typing 'd' returns here, 'q' quits, '?'  lists all info commands, 'h' gives
+a primer for first-timers . . .") and a list of subjects near the bottom
+(subjects such as "Info", "Make," "Gcc", "Gdb", etc.).
+
+<P>Go ahead and type "h" for a tutorial.  The most basic functions to remember are:
+type "q" to quit, type "?"  to get a list of commands, hit the space bar or PgDn
+key to go down a page, press the Del key or the PgUp key to go up a page, press
+"n" to go to the next node (think of a node as being a collection of one or more
+pages dealing with a single topic), press "p" to go to the previous node, use
+the up and down arrow keys to highlight choices of new nodes to jump to, and
+press enter to jump to the highlighted node.
+
+<P>Just play around with it a little while, and you will get the hang of it.  Type
+"d" to get back to the main directory, use the down arrow to highlight "Gcc",
+press enter, press the down arrow to highlight "Contributors", press enter, scan
+through the pages of text by hitting the PgDn key a couple of times, type "?"
+to see a list of commands, type "p" a couple of times, etc.
+
+<P><H2>Using the Compiler</H2>
+
+<P>To compile a C source file called "myprog.c", type "gcc -o myprog.exe myprog.c".
+The -o switch tells gcc that it should call the resulting executable
+"myprog.exe".  To compile the C++ source file "myprog.cc", type "gcc -o
+myprog.exe myprog.cc -lgpp".  C++ source files should have the extension ".cc".
+The -lgpp switch tells gcc to link the C++ libraries.  You can also tell gcc to
+optimize your code by using the -O switch.  There are two levels of optimization
+(-O and -O2, the highest being -O2).  Thus, for the fastest-executing code (at
+the expense of time to compile and of size of the executable), you would type
+"gcc -O2 -o myprog.exe myprog.c" for myprog.c and "gcc -O2 -o myprog.exe
+myprog.cc -lgpp" for myprog.cc.
+
+<P>Note:  Specifying "-o myprog.exe" is important.  If you don't specify ".exe" as
+the suffix of the output file name, the compiler will generate a UNIX-style
+executable which will not run under OS/2 even if you subsequently rename the
+file so that it has a .exe extension.
+
+<P><H2>Using the Debugger</H2>
+
+<P>To debug a program, you need to compile it with the -g switch:  "gcc -g -o
+myprog.exe myprog.c" for myprog.c and likewise for myprog.cc.  After compiling,
+you then type "gdb myprog.exe" to start the debugger.  Type "h" at the debugger
+prompt to get a list of help topics.  gdb supports all sorts of breakpoints
+(including conditional ones), and you can watch variables, set variables to
+different values, etc.  For example, to get help on running programs from within
+the gdb, you can type "help running".  That will give you a list of commands
+such as run, kill, step, etc.  You can get help on individual commands by
+typing, for example, "help step".
+
+<P>The following is a sample compile and debug session.  Go into the emx\test
+directory and type "gcc -g -o hello.exe hello.cc -lgpp" to compile hello.cc.
+Type "hello" to run it, to see if the compiler is functioning.  The program will
+print "Hello, world!"  on the screen.  Now type "gdb hello.exe" to start gdb.
+At the prompt "(gdb)", type "list main" to list the function "main".  Then type
+"break 5" to cause execution to stop at line 5 in the main function.  Type "run"
+to start execution -- it will stop at line 5. Type "print argc" to see the value
+of the variable "argc".  Type "step" to run line 5 then halt execution at the
+next line.  Type "quit" to quit.  To list a function (main(), say) that is
+longer than a screen-full, type "list main"; then type "list" again to list the
+next screenful of main.
+
+<P><H2>Using Make</H2>
+
+<P>Assume you have a program made of the following source files:  "myprog1.c" and
+"myprog2.c".  You might manually compile these files by typing "gcc -o
+myprog.exe myprog1.c myprog2.c".  Of course, if you change only one of the
+files, typing such a command causes the recompiling of both source files.
+During development, this could be tiresome if the files take a long time to
+compile.  A better way would be to type "gcc -c myprog1.c" which compiles
+myprog1.c into the object file "myprog1.o" (the -c switch tells gcc to make an
+object file), then to type "gcc -c myprog2.c" to generate myprog2.o, and finally
+to type "gcc -o myprog.exe myprog1.o myprog2.o".  This way, if you change only
+myprog1.c, you can recompile it and relink it with myprog2.o to create
+myprog.exe (skipping the "gcc -c myprog2.c" step).  This will be much faster if
+the source files take a long time to compile (or if you have a lot of source
+files).
+
+<P>Of course, doing all this typing is tiresome, too.  Also, if myprog1.c happens
+to depend on myprog1.h, and you change myprog1.h, you must recompile myprog1.c.
+Thus, you have to keep track of all the file dependencies in order to know,
+after changing one header file, which other files need to be recompiled.
+
+<P>Fortunately, make takes care of all of this automatically.  All you have to do
+is create one text file that describes the various dependencies and the various
+steps to compile the program.  You name the text file "Makefile".  From then on,
+whenever you type "make", make examines the Makefile, looks for files which have
+changed since the last compile, recompiles any files which depend on the changed
+files, and relinks everything into a new executable.
+
+<P>For example, suppose that myprog.exe is made from myprog1.c and myprog2.c, that
+myprog1.c contains the lines "#include "myprog1.c"" and "#include "mainhead.h"",
+and that myprog2.c includes myprog2.h and mainhead.h.  The Makefile describing
+all of this is
+
+<PRE><SMALL>
+myprog.exe: myprog1.o myprog2.o
+   gcc -o myprog.exe myprog1.o myprog2.o
+
+myprog1.o: myprog1.c myprog1.h mainhead.h
+   gcc -c myprog1.c
+
+myprog2.o: myprog2.c myprog2.h mainhead.h
+   gcc -c myprog2.c
+</SMALL></PRE>
+
+<P>The first line shows that myprog.exe depends on myprog1.o and myprog2.o.  If
+either of those has changed since the last time make was invoked, make will
+relink them to create myprog.exe by giving the command under the first line.
+The fourth line shows that myprog1.o depends on myprog1.c, myprog1.h, and
+mainhead.h.  If any of these three files have changed since the last time make
+was run, make will recompile myprog1.o by issuing the command on line five.  It
+will also realize that myprog.o has changed, that myprog.exe depends on
+myprog.o, and will relink myprog.exe.  If mainhead.h is changed, make will
+recompile and relink everything since myprog1.o needs to be changed, myprog2.o
+needs to be changed, and thus myprog.exe needs to be changed.
+
+<P>The example above shows the general form of a Makefile.  You give a target (like
+"myprog.exe" or "myprog1.o") followed by a colon, followed by a space, followed
+by a space-delimited list of files the target depends on.  The next line
+specifies the action to be taken when any of the dependencies change:  the first
+character MUST be a tab (not just a bunch of spaces used for indentation); then
+you type the command make should issue.  A Makefile is just a list of such
+targets, dependencies, and actions.
+
+<P><H2>Using the Assembler</H2>
+
+<P>The compiler provided with this system (gcc) can handle not only C and C++ code
+but assembly as well.  It can also generate assembly language from C or C++
+source.  To assemble and link assembly-language programs, type "gcc -o
+myprog.exe myprog.s" where "myprog.exe" is the name of the executable and where
+"myprog.s" is the name of the source-code file.  Assembly-language source-code
+files should have the extension ".s".  To generate assembly from C code, type
+"gcc -S myprog.c" where "myprog.c" is the name of the C-source-code file -- the
+resulting assembly language will be put into the file "myprog.s".
+
+<P><H2>Where to Get More Information</H2>
+
+<P>The GNU software-development system does not come with documentation like that
+you would get with, for example, Borland C++.  However, emxdev.doc (in the
+emx\doc directory) does contain a complete list of library functions, including
+a list of headers you need to include, what the functions do, and what
+parameters they accept.
+
+<P>Also, since the C compiler is ANSI-C compliant (or at least close to it) and
+since the C++ compiler is close to AT&T-C++-2.0 compliant, you can use just
+about any reference manuals for ANSI C and AT&T C++ 2.0.  I use the ones I got
+with an old version of Borland Turbo C++.  If you don't have such manuals, you
+should be able to find something suitable in a bookstore.  If you want a C
+reference manual, I recommend C:  A REFERENCE MANUAL, by S. P. Harbison and G.
+L. Steele, Jr.  (Prentice-Hall, 1991).  If you are just learning C or C++, there
+is a large number of books to choose from, and you shouldn't have any trouble
+finding one that is suitable.
+
+<P>For those of you developing applications that use the PM or that use special
+OS/2 functions, the system DOES support all of the OS/2 API functions, including
+ones for semaphores, PM programming, named pipes, threads, etc., and it supports
+Kbd, Mou, and Vio functions.  See emxdev.doc (in the emx\doc directory) for a
+list of the supported functions.  The documentation does not contain a manual on
+how to use these API calls -- you need an OS/2 programming book for that.  For
+information on programming the PM, take a look at:
+
+<UL>
+<LI>OS/2 2.0 Presentation Manager GPI:  A Programming Guide to Text, Graphics,
+    and Printing, by G. C. E. Winn (Van Nostrand Reinhold, 1992)
+<LI>Learning to Program OS/2 2.0 Presentation Manager by Example:  Putting the
+    Pieces Together, by Stephen Knight (Van Nostrand Reinhold, 1992).
+<LI>Programming the OS/2 Presentation Manager, by Charles Petzold (Microsoft
+    Press, 1989).
+</UL>
+
+<P>The book by Petzold was written for OS/2 1.3, but the information in it is still
+valid.  You can also get the IBM redbooks (which are quite economical and of
+which there is a large assortment of titles).
+
+<P>For using assembly language, the best choice would be a book about
+assembly-language programming in OS/2, supplemented perhaps with a book on
+programming the 80386 or 80486.
+
+<P>Also, way back when you were unarchiving, you might have been itching to examine
+the various readme files and other documentation.  Now is the time to do that to
+your heart's content.  Browse through the files in the emx/doc directory and the
+information available from the hypertext reader.
+
+<P>Additional sources of information include GEnie (the OS/2 category of the IBMPC
+bulletin board), Usenet news (the comp.os.os2 newsgroups), and CompuServe.
+These are places where you can exchange information with other people who use
+and program for OS/2.  In particular, CompuServe is one of the official homes
+for the OS/2 developers' assistance program.  If you are a member of the
+program, IBM will (for only $15) provide you with a CD that contains a beta
+version of the software development kit (including the C and C++ compiler and
+debugger and a full set of on-line documentation), a beta version of OS/2 (which
+contains enhancements such as Windows 3.1 compatibility), and many other
+goodies.  For more information, type "go os2dap" on CompuServe or call
+1-407-982-6408.  The people at 1-800-3-ibm-os2 might also be able to provide
+more information.
+
+<P><H2>Conclusions</H2>
+
+<P>I wrote this to help people get started with a free -- yet powerful -- 32-bit
+software-development system for OS/2.  For (at most) the price of a few books,
+you have a full programming system for C++, C, and assembly language.  For the
+additional price of an OS/2 programming book, you have a bargain-basement SDK.
+
+<P>If you find errors in this document, or if you have suggestions for its
+improvement, please let me know.  My GEnie address is "BROOKE", and my Internet
+address is "brooke@hope.caltech.edu".
+
+<P><H2>Optional Packages</H2>
+
+<P>There are three optional packages you can get for this software-development
+system, packages which are not necessary but which can nevertheless be
+important.  All of them are in the pub/os2/2.0/programming/emx-0.8f directory on
+ftp-os2.nmsu.edu.  On rusinfo.rus.uni-stuttgart.de, they are probably available
+in a directory such as pub/os2/emx-0.8f.
+
+<P>The first package contains curses.  Curses is a library of functions that allow
+you to move the cursor around on the screen, manipulate screen-fulls of text, and
+get input.  You need the files "bsddev.zip" and "bsddoc.zip".  The source code
+is available in "bsdsrc.zip".
+
+<P>The second package contains full source code to the software-development system.
+Most people do not need the source code to everything, but the source code to
+the libraries (i.e., to all the functions) is sometimes useful.  The source code
+to the C libraries is in "emxlib.zip", and the source to the C++ libraries is in
+"gccsrc.zip".  install.doc (in the emx\doc directory) gives the names of all the
+other relevant archives.
+
+<P>The third package is a collection of sample and test programs that you can use
+to test the compiler and to learn about various aspects of programming.  These
+programs are in the file "emxtest.zip."
+
+<P><H2>Sources of Distribution</H2>
+
+<P>This document already described some places from which you can get the necessary
+archives:  ftp-os2.nmsu.edu and rusinfo.rus.uni-stuttgart.de.  However, some
+people don't have access to these sites or don't have modems fast enough to
+download megabytes of data in a reasonable amount of time.  For these people, I
+am including the following list of people who are willing to distribute the
+whole system through regular mail.  Keep in mind that people might change their
+prices, cease distributing the software, move, etc., so contact them first to
+get current details.  Make sure you ask them if they have the latest version of
+the EMX port (which is currently version 0.8f).
+
+<P><FONT SIZE=2>
+ Brooke Anderson<BR>
+ 1155 E. Del Mar #312<BR>
+ Pasadena, CA  91106<BR>
+ USA<BR>
+ Phone:  (818) 577-7555<BR>
+ GEnie:  BROOKE<BR>
+ Internet:  brooke@hope.caltech.edu<BR>
+ Cost:  $18 in US; in other countries,
+        shipping + US$10<BR>
+ Provides:  the basic set of archives and bsddev.zip, bsddoc.zip, bsdsrc.zip,
+            emxtest.zip, emxlib.zip, and gccsrc.zip.<BR>
+
+<P>Juergen Egeling<BR>
+ Werderstr. 41<BR>
+ 7500 Karlsruhe<BR>
+ Germany<BR>
+ Phone:  0721-373842<BR>
+ FAX:  0721-373842<BR>
+ BITNET:  ry90@dkauni2<BR>
+ Internet:  ry90@ibm3090.rz.uni-karlsruhe.dbp.de<BR>
+ X.400:  S=ry90;OU=ibm3090;OU=rz;P=uni-karlsruhe;A=dbp;C=de<BR>
+ Cost:  disks + shipping + DM 25<BR>
+
+<P>Wey J. Ho<BR>
+ Department of Physics<BR>
+ Monash University<BR>
+ Clayton<BR>
+ VIC 3168<BR>
+ Australia<BR>
+ Phone:  +613-565-3615 (or Australia (03) 565 3615)<BR>
+ Fax:  +613-565-3637 (or Australia (03) 565 3637)<BR>
+ Internet:  sci240s@monu6.cc.monash.edu.au<BR>
+ Cost:  disks + shipping + AU$10<BR>
+
+<P>Doug Robison<BR>
+ 1311 Webster<BR>
+ Chillicothe, MO  64601<BR>
+ USA<BR>
+ Phone:  (816) 646-1085<BR>
+ GEnie:  D.ROBISON<BR>
+ Cost:  disks + shipping + US$5<BR>
+</FONT>
+
+<P>If you would like to get on this list and if you have access to Internet or an
+on-line service, just send me your name, a description of how people can contact
+you (including your e-mail address), how much money you want for the job (such
+as "$20", "disks + shipping + $30", or whatever you want to charge), and what
+you are offering for that price.  It is helpful to have a list that includes
+people in various countries.
+
+<P><H2>Distributing This Document</H2>
+
+<P>I give permission to use, to distribute, and to copy this document freely.  If
+you want to upload it to any bulletin-board or on-line service, please do so.  I
+do update this document occasionally (and put the latest version on GEnie and
+ftp-os2.nmsu.edu), so you might want to make sure you have the latest version
+before distributing it.
+
+<PRE><SMALL>
+ Brooke Anderson
+ 1155 E. Del Mar #312
+ Pasadena, CA  91106
+ USA
+ Phone:  (818) 577-7555
+ GEnie:  BROOKE
+ Internet:  brooke@hope.caltech.edu
+</SMALL></PRE>
+
+</TD>
+<TD WIDTH="10%">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="" USEMAP="#Linkbar"
+   SRC="../common/images/articlebar.gif">
+
+</BODY>
+</HTML>

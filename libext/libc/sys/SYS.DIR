@@ -1,0 +1,4 @@
+This directory contains BSD syscall emulations.
+
+The modules here should call only internal 
+library functions and functions of the DOS*() api.

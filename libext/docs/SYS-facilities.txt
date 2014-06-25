@@ -1,0 +1,495 @@
+	[$Id: SYS-facilities.txt,v 1.4 2000/08/14 16:13:41 amai Exp $]
+
+
+
+	LibExt: Emulation of a Generic 4.4-BSD-Subsystem
+	================================================
+
+
+  -- A Table of 4.4-BSD-Subsystem Interfaces (Emulated/Missing/Stubs) --
+
+
+ Listed below are all man(2) interfaces of the traditional 4.4BSD kernel. 
+ The list is somewhat old-fashioned (for 4.3BSD compatibility) and not POSIX 
+ conforming.
+
+ For details, cf. 'doc/*.txt' and 'doc/man*'. The sources are organized
+ mostly according to the standard headers, so that you can easily find the
+ respective implementation. 
+
+ You can find out the exact file name of the C module that defines a specific 
+ interface function or global constant or variable by looking into the 'emxexp' 
+ generated files with export definition tables, e.g. 'libext/exp'.
+
+ Interfaces pre-fixed '# ' are defined in libExt. Usually, stubs are not marked.
+
+
+   NAME		 DESCRIPTION			COMMENT
+   ----------------------------------------------------
+
+1. Kernel primitives
+
+1.1. Process naming and protection
+  # <sys/param.h>
+  # sethostid	set host id 			dummy
+   gethostid	get host id 			tcpip configuration
+  # sethostname	set host name 			dummy
+   gethostname	get host name 			tcpip configuration
+   getuid	get user id			dummy (or missing)
+   geteuid	get effective user id			"
+   setreuid	set real and effective user id's	"
+   getgid	get accounting group id		"
+   getegid	get effective accounting group id	"
+   getgroups	get access group set			"
+   setregid	set real and effective group id's	"
+   setgroups	set access group set			"
+   getpgrp	get process group			"
+   setpgrp	set process group			"
+   getpid	get process id
+   fork		create new process (child)
+   exit		terminate a process
+   execve	execute a different process
+
+  <sys/wait.h>
+   wait		wait for child information
+   wait3	retrieve specific child information	missing
+
+1.2 Memory management
+
+  # <sys/mman.h> memory management definitions
+   sbrk		 change data section size
+   sstk		 change stack section size		missing
+  # getpagesize	 get memory page size
+  # mmap	 map pages of memory
+  # msync	 flush modified mapped pages to filesystem
+  # munmap	 unmap memory
+  # mprotect	 change protection of pages
+   madvise	 give memory management advice		missing
+   mincore	 determine core residency of pages	missing
+   msleep	 sleep on a lock			missing
+   mwakeup	 wakeup process sleeping on a lock	missing
+
+1.3 Signals
+
+  # <signal.h> 	 signal definitions
+  # sigvec	 set handler for signal
+  kill		 send signal to process
+  # killpg	 send signal to process group
+  # sigblock	 block set of signals
+  # sigsetmask 	 restore set of blocked signals
+  # sigpause	 wait for signals
+  sigstack	 set software stack for signals		missing
+
+1.4 Timing and statistics
+
+  # <sys/time.h>	 time-related definitions
+   gettimeofday		 get current time and timezone
+   settimeofday		 set current time and timezone
+  # getitimer		 read an interval timer
+  # setitimer		 get and set an interval timer
+   profil		 profile process		emx experimental
+
+1.5 Descriptors
+
+  # getdtablesize	descriptor reference table size
+   dup		 	duplicate descriptor
+   dup2		 	duplicate to specified index
+   close	 	close descriptor
+   select	 	multiplex input/output
+   fcntl	 	control descriptor options
+   wrap		 	wrap descriptor with protocol	missing
+
+1.6 Resource controls
+
+  # <sys/resource.h>	 resource-related definitions
+  # getpriority		 get process priority
+  # setpriority		 set process priority
+  # getrusage		 get resource usage		dummy
+  # getrlimit		 get resource limitations	mostly dummy
+  # setrlimit		 set resource limitations	mostly dummy
+
+1.7 System operation support
+
+ mount		mount a device file system		missing
+ swapon		add a swap device			missing
+ umount		umount a file system			missing
+ # sync		flush system caches
+ reboot		reboot a machine			missing
+ acct		specify accounting file			missing
+
+
+2. System facilities
+
+2.1 Generic operations
+
+ read		 read data
+ write		 write data
+ <sys/uio.h>	 scatter-gather related definitions
+ readv		 scattered data input
+ writev		 gathered data output
+ #<sys/ioctl.h>	 standard control operations
+ ioctl		 device control operation
+
+2.2 File system
+
+ Operations suffixed with a * exist in two forms as
+shown,	operating on a file name, and operating on a file
+descriptor, when the name is preceded with a ``f''.
+
+ <sys/file.h>	 file system definitions
+ chdir		 change directory
+ chroot		 change root directory
+ mkdir		 make a directory
+ rmdir		 remove a directory
+ open		 open a new or existing file
+ mknod		 make a special file			missing
+ portal		 make a portal entry			missing
+ unlink		 remove a link				not fully compatible	
+ # stat *	 return status for a file
+ # lstat	 returned status of link
+ # chown *	 change owner
+ chmod *	 change mode
+ utimes		 change access/modify times
+ link		 make a hard link			missing
+ # symlink	 make a symbolic link			stubs
+ readlink	 read contents of symbolic link		missing
+ rename		 change name of file			not fully compatible
+ lseek		 reposition within file
+ truncate *	 truncate file
+ access		 determine accessibility
+ flock		 lock a file				emx dummy
+
+2.3 Communications
+
+ #<sys/socket.h> standard definitions
+ socket		 create socket
+ bind		 bind socket to name
+ getsockname	 get socket name
+ listen		 allow queuing of connections
+ accept		 accept a connection
+ connect	 connect to peer socket
+ socketpair 	 create pair of connected sockets
+ sendto		 send data to named socket
+ send		 send data to connected socket
+ recvfrom	 receive data on unconnected socket
+ recv		 receive data on connected socket
+ sendmsg	 send gathered data and/or rights
+ recvmsg	 receive scattered data and/or rights
+ shutdown	 partially close full-duplex connection
+ getsockopt 	 get socket option
+ setsockopt 	 set socket option
+
+
+
+The general 4.4BSD layout [excerpts from smm/install]:
+
+		Installing 4.4BSD 
+
+The filesystem in 4.4BSD has been reorganized in an effort to meet several goals: 
+
+1) The root filesystem should be small. 
+
+2) There should be a per-architecture centrally-shareable read-only /usr filesystem. 
+
+3) Variable per-machine directories should be concentrated below a single mount point named /var. 
+
+4) Site-wide machine independent shareable text files should be separated from architecture specific binary files and should be concentrated belowasingle mount point named /usr/share. 
+
+These goals are realized with the following general layouts. The reorganized root filesystem has the following directories: 
+
+/etc 	(config files) 
+/bin 	(user binaries needed when single-user) 
+/sbin 	(root binaries needed when single-user) 
+/local 	(locally added binaries used only by this machine) 
+/tmp 	(mount point for memory based filesystem) 
+/dev 	(local devices) 
+/home 	(mount point for AMD) 
+/var 	(mount point for per-machine variable directories) 
+/usr 	(mount point for multiuser binaries and files) 
+
+
+
+The reorganized /usr filesystem has the following directories: 
+
+/usr/bin 	(user binaries) 
+/usr/contrib 	(software contributed to 4.4BSD) 
+/usr/games 	(binaries for games, score files in /var) 
+/usr/include 	(standard include files) 
+/usr/lib 	(lib*.a from old /usr/lib) 
+/usr/libdata 	(databases from old /usr/lib) 
+/usr/libexec 	(executables from old /usr/lib) 
+/usr/local 	(locally added binaries used site-wide) 
+/usr/old 	(deprecated binaries) 
+/usr/sbin 	(root binaries) 
+/usr/share 	(mount point for site-wide shared text) 
+/usr/src 	(mount point for sources) 
+
+
+
+The reorganized /usr/share filesystem has the following directories: 
+
+/usr/share/calendar 	(various useful calendar files) 
+/usr/share/dict 	(dictionaries) 
+/usr/share/doc 		(4.4BSD manual sources) 
+/usr/share/games 	(games text files) 
+/usr/share/groff_font 	(grofffont information) 
+/usr/share/man 		(typeset manual pages) 
+/usr/share/misc 	(dumping ground for random text files) 
+/usr/share/mk 		(templates for 4.4BSD makefiles) 
+/usr/share/skel 	(template user home directory files) 
+/usr/share/tmac 	(various groffmacro packages) 
+/usr/share/zoneinfo 	(information on time zones) 
+
+
+
+The reorganized /var filesystem has the following directories: 
+
+/var/account 	(accounting files, formerly /usr/adm) 
+/var/at 	(at (1) spooling area) 
+/var/backups 	(backups of system files) 
+/var/crash 	(crash dumps) 
+/var/db 	(system-wide databases, e.g. tags) 
+/var/games 	(score files) 
+/var/log 	(log files) 
+/var/mail 	(users mail) 
+/var/obj 	(hierarchy to build /usr/src) 
+/var/preserve 	(preserve area for vi) 
+/var/quotas 	(directory to store quota files) 
+/var/run 	(directory to store *.pid files) 
+/var/rwho 	(rwho databases) 
+
+/var/spool/ftp 		(home directory for anonymous ftp) 
+/var/spool/mqueue 	(sendmail spooling directory) 
+/var/spool/news 	(news spooling area) 
+/var/spool/output 	(printer spooling area) 
+/var/spool/uucp 	(uucp spooling area) 
+
+/var/tmp 	(disk-based temporary directory) 
+/var/users 	(root of per-machine user home directories) 
+
+
+
+As described in section 3.3, the most immediately obvious change in 4.4BSD is the reorganization of the system filesystems. Users of certain recent vendor releases have seen this general organization, although 4.4BSD takes the reorganization a bit further. 
+	The directories most affected are /etc, that now contains only system configuration files; /var, a new filesystem containing per-system spool and log files; and /usr/share, that contains most of the text files shareable across architectures such as documentation and macros. 
+	System administration programs formerly in /etc are nowfound in /sbin and /usr/sbin. Various programs and data files formerly in /usr/lib are nowfound in /usr/libexec and /usr/libdata, respectively. 
+	Administrative files formerly in /usr/adm are in /var/account and, similarly, log files are now in /var/log. The directory /usr/ucb has been merged into /usr/bin, and the sources for programs in /usr/bin are in /usr/src/usr.bin. Other source directories parallel the destination directories; /usr/src/etc has been greatly expanded, and /usr/src/share is new. 
+	The source for the manual pages, in general, are with the source code for the applications they document. Manual pages not closely corresponding to an application program are found in /usr/src/share/man. The locations of all man pages is listed in /usr/src/share/man/man0/man[1-8]. The manual page hier(7) has been updated and made more detailed; it is included in the printed documentation. 
+
+You should review it to familiarize yourself with the newlayout. 
+
+A new utility, mtree(8), is provided to build and check filesystem hierarchies with the proper contents, owners and permissions. Scripts are provided in /etc/mtree (and /usr/src/etc/mtree) for the root, /usr and /var filesystems. Once afilesystem has been made for /var, mtree can be used to create a directory hierarchy there or you can simply use tar to extract the prototype from the second file of the distribution tape. 
+
+
+Changes in the /etc directory 
+
+The /etc directory now contains nearly all the host-specific configuration files. Note that some file formats have changed, and those configuration files containing pathnames are nearly all affected by the reorganization. See the examples provided in /etc (installed from /usr/src/etc) as a guide. The following table lists some of the local configuration files whose locations and/or contents have changed. 
+
+
+		4.3BSD and Earlier 	4.4BSD Comments 
+
+/etc/fstab 	  /etc/fstab 		new format; see below 
+/etc/inetd.conf   /etc/inetd.conf 	pathnames of executables changed 
+/etc/printcap 	  /etc/printcap 	pathnames changed 
+/etc/syslog.conf  /etc/syslog.conf 	pathnames of log files changed 
+/etc/ttys 	  /etc/ttys 		pathnames of executables changed 
+/etc/passwd 	  /etc/master.passwd 	newformat; see below 
+/usr/lib/sendmail.cf /etc/sendmail.cf 	changed pathnames 
+/usr/lib/aliases  /etc/aliases 		may contain changed pathnames 
+/etc/*.pid	  /var/run/*.pid 
+
+			New in 4.3BSD-Tahoe 	4.4BSD Comments 
+
+/usr/games/dm.config 	/etc/dm.conf 	configuration for games (see dm (8)) 
+/etc/zoneinfo/localtime /etc/localtime 	timezone configuration 
+/etc/zoneinfo 		/usr/share/zoneinfo timezone configuration 
+/etc/aliases.db 			database version of the aliases file 
+/etc/amd-home 				location database of home directories 
+/etc/amd-vol 				location database of exported filesystems 
+/etc/changelist 	/etc/security 	files to back up 
+/etc/csh.cshrc 				system-wide csh(1) initialization file 
+/etc/csh.login 				system-wide csh(1) login file 
+/etc/csh.logout 			system-wide csh(1) logout file 
+/etc/disklabels 			directory for saving disklabels 
+/etc/exports 				NFS list of export permissions 
+/etc/ftpwelcome 			message displayed for ftp users; see ftpd(8) 
+/etc/kerberosIV 			Kerberos directory; see below 
+/etc/man.conf 				lists directories searched by man (1) 
+/etc/mtree 				directory for local mtree files; see mtree(8) 
+/etc/netgroup 				NFS group list used in /etc/exports 
+/etc/pwd.db 				non-secure hashed user data base file 
+/etc/spwd.db 				secure hashed user data base file 
+/etc/security 				daily system security checker 
+
+System security changes require adding several new``well-known''groups to /etc/group. The groups that are needed by the system as distributed are: 
+
+name 	number 	purpose 
+wheel 	 0 	users allowed superuser privilege 
+daemon 	 1 	processes that need less than wheel privilege 
+kmem 	 2 	read access to kernel memory 
+sys 	 3 	access to kernel sources 
+tty 	 4 	access to terminals 
+operator 5 	read access to rawdisks 
+bin 	 7 	group for system binaries 
+news 	 8 	group for news 
+wsrc 	 9 	write access to sources 
+games   13 	access to games 
+staff	20	system staff 
+guest 	31 	system guests 
+nobody 	39 	the least privileged group 
+utmp 	45 	access to utmp files 
+dialer 117 	access to remote ports and dialers 
+
+
+Only users in the ``wheel''group are permitted to su to ``root''. 
+
+Most programs that manage directories in /var/spool nowrun set-group-id to ``daemon' 'so that users cannot directly access the files in the spool directories. 
+
+The special files that access kernel memory, /dev/kmem and /dev/mem, are made readable only by group ``kmem''. Standard system programs that require this access are made set-group-id to that group. 
+
+The group ``sys''is intended to control access to kernel sources, and other sources belong to group ``wsrc.''
+
+Rather than make user-terminals writable by all users, they are now placed in group ``tty'' and made only group writable. Programs that should legitimately have access to write on user terminals such as talkd and write now run set-group-id to ``tty''. 
+
+The ``operator'' group controls access to disks. By default, disks are readable by group ``operator'', so that programs such as dump can access the filesystem information without being set-user-id to ``root''. The shutdown(8) program is executable only by group operator and is setuid to root so that members of group operator may shut down the system without root access. 
+
+The ownership and modes of some directories have changed. The at programs now run set-user-id ``root'' instead of ``daemon.'' Also, the uucp directory no longer needs to be publicly writable, as tip reverts to privileged status to remove its lock files. After copying your version of /var/spool, you should do: 
+
+	# chown -R root /var/spool/at 
+	# chown -R uucp.daemon /var/spool/uucp 
+	# chmod -R o-w /var/spool/uucp 
+
+The format of the cron table, /etc/crontab,has been changed to specify the user-id that should be used to run a process. The userid ``nobody''isfrequently useful for non-privileged programs. Local changes are nowput in a separate file, /etc/crontab.local. 
+Some of the commands previously in /etc/rc.local have been moved to /etc/rc; several 
+new functions are now handled by /etc/rc, /etc/netstart and /etc/rc.local. You should 
+look closely at the prototype version of these files and read the manual pages for the commands contained in it before trying to merge your local copy. Note in particular that ifconfig has had many changes, and that host names are now fully specified as domain-style names (e.g., vangogh.CS.Berkeley.EDU) for the benefit of the name server. 
+
+Some of the commands previously in /etc/daily have been moved to /etc/security, and 
+several newfunctions have been added to /etc/security to do nightly security checks on the system. 
+The script /etc/daily runs /etc/security each night, and mails the output to the super-user. Some of the checks done by /etc/security are: 
+
+.Syntax errors in the password and group files. 
+.Duplicate user and group names and id's. 
+.Dangerous search paths and umask values for the superuser. 
+.Dangerous values in various initialization files. 
+.Dangerous .rhosts files. 
+.Dangerous directory and file ownership or permissions. 
+.Globally exported filesystems. 
+.Dangerous owners or permissions for special devices. 
+
+In addition, it reports any changes to setuid and setgid files, special devices, or the files in /etc/changelist since the last run of /etc/security. Backup copies of the files are saved in /var/backups. Finally,the system binaries are checksummed and their permissions validated against the mtree(8) specifications in /etc/mtree. 
+
+		Shadowpassword files 
+
+The password file format adds change and expiration fields and its location has changed to protect the encrypted passwords stored there. The actual password file is nowstored in /etc/master.passwd. 
+
+The hashed dbm password files do not contain encrypted passwords, but contain the file offset to the entry with the password in /etc/master.passwd (that is readable only by root). Thus, the getpwnam() and getpwuid() functions will no longer return an encrypted password string to non-root callers. An old-style passwd file is created in /etc/passwd by the vipw(8) and pwd_mkdb(8) programs. See also passwd(5). 
+Several newusers have also been added to the group of ``well-known''users in /etc/passwd. 
+
+The current list is: 
+	name 	number 
+	root 	0 
+	daemon 	1 
+	operator 2 
+	bin 	3 
+	games 	7 
+	uucp 	66 
+	nobody 	32767 
+
+The ``daemon''user is used for daemon processes that do not need root privileges. The ``operator''user-id is used as an account for dumpers so that they can log in without having the root password. By placing them in the ``operator''group, they can get read access to the disks. The ``uucp'' login has existed long before 4.4BSD, and is noted here just to provide a common user-id. The password entry ``nobody'' has been added to specify the user with least privilege. The ``games'' user is a pseudo-user that controls access 
+to game programs. 
+
+After installing your updated password file, you must run pwd_mkdb(8) to create the password database. Note that pwd_mkdb(8) is run whenever vipw(8) is run. 
+
+
+	The /var filesystem 
+
+The spooling directories saved ontape may be restored in their eventual resting places without too much concern. Be sure to use the `-p' option to tar(1) so that files are recreated with the same file modes. 
+The following commands provide a guide for copying spool and log files from an existing system into a new /var filesystem. At least the following directories should already exist on /var: output, log, backups and db. 
+
+	SRC=/oldroot/usr 
+	cd $SRC; tar cf - msgs preserve | (cd /var && tar xpf -) 
+ #copy $SRC/spool to /var 
+	cd $SRC/spool 
+	tar cf - at mail rwho | (cd /var && tar xpf -) 
+	tar cf - ftp mqueue news secretmail uucp uucppublic | \ 
+	(cd /var/spool && tar xpf -) 
+ #everything else in spool is probably a printer area 
+	mkdir .save 
+	mv at ftp mail mqueue rwho secretmail uucp uucppublic .save 
+	tar cf - * | (cd /var/spool/output && tar xpf -) 
+	mv .save/* . 
+	rmdir .save 
+	cd /var/spool/mqueue 
+	mv syslog.7 /var/log/maillog.7 
+	mv syslog.6 /var/log/maillog.6 
+	mv syslog.5 /var/log/maillog.5 
+	mv syslog.4 /var/log/maillog.4 
+	mv syslog.3 /var/log/maillog.3 
+	mv syslog.2 /var/log/maillog.2 
+	mv syslog.1 /var/log/maillog.1 
+	mv syslog.0 /var/log/maillog.0 
+	mv syslog /var/log/maillog 
+ #move $SRC/adm to /var 
+	cd $SRC/adm 
+	tar cf - . | (cd /var/account && tar xpf -) 
+	cd /var/account 
+	rm -f msgbuf 
+	mv messages messages.[0-9] ../log 
+	mv wtmp wtmp.[0-9] ../log 
+	mv lastlog ../log 
+
+
+
+	Bug fixes and changes between 4.3BSD and 4.4BSD 
+
+The major newfacilities available in the 4.4BSD release are a newvirtual memory system, the addition of ISO/OSI networking support, a new virtual filesystem interface supporting filesystem stacking, a freely redistributable implementation of NFS, a log-structured filesystem, enhancement of the local filesystems to support files and filesystems that are up to 2“63 bytes in size, enhanced security and system management support, and the conversion to and addition of the IEEE Std1003.1 (``POSIX'') facilities and many 
+of the IEEE Std1003.2 facilities. In addition, many new utilities and additions to the C library are present as well. 
+
+The kernel sources have been reorganized to collect all machine-dependent files for each architecture under one directory, and most of the machine-independent code is nowfree of code conditional on specific machines. The user structure and process structure have been reorganized to eliminate the statically-mapped user structure and to make most of the process resources shareable by multiple processes. The system and include files have been converted to be compatible with ANSI C, including function prototypes for most of the exported functions. There are numerous other changes throughout the system. 
+
+3.5.1. Changes to the kernel 
+This release includes several important structural kernel changes. The kernel uses a new internal system call convention; the use of global (``u-dot'') variables for parameters and error returns has been eliminated, and interrupted system calls no longer abort using non-local goto's(longjmp's). A newsleep interface separates signal handling from scheduling priority,returning characteristic errors to abort or restart the current system call. This sleep call also passes a string describing the process state, that is used by the ps(1) program. The old sleep interface can be used only for non-interruptible sleeps. The sleep interface (tsleep) can be used at any priority, but is only interruptible if the PCATCH flag is set. When interrupted, tsleep returns EINTR or ERESTART. 
+
+Manydata structures that were previously statically allocated are now allocated dynamically. These structures include mount entries, file entries, user open file descriptors, the process entries, the vnode table, the name cache, and the quota structures. 
+
+To protect against indiscriminate reading or writing of kernel memory, all writing and most reading of kernel data structures must be done using a new``sysctl''interface. The information to be accessed is described through an extensible ``Management Information Base''(MIB) style name, described as a dotted set of components. A new utility, sysctl(8), retrieves kernel state and allows processes with appropriate privilege to set kernel state. 
+
+
+
+	 Security 
+
+The kernel runs with four different levels of security. Any superuser process can raise the security level, but only init()(8) can lower it. Security levels are defined as follows: 
+
+-1 	Permanently insecure mode - always run system in level 0 mode. 
+ 0	Insecure mode - immutable and append-only flags may be turned off. All devices may be read or written subject to their permissions. 
+ 1	Secure mode - immutable and append-only flags may not be cleared; disks for mounted filesystems, /dev/mem,and /dev/kmem are read-only. 
+ 2	Highly secure mode - same as secure mode, plus disks are always read-only whether mounted or not. 
+
+This levelprecludes tampering with filesystems by unmounting them, but also inhibits running newfs(8) while the system is multi-user. See chflags(1) and the -o option to ls(1) for information on setting and displaying the immutable and append-only flags. 
+Normally,the system runs in level0mode while single user and in level1mode while multiuser. If the level2mode is desired while running multiuser,itcan be set in the startup script /etc/rc using sysctl(1). If it is desired to run the system in level 0 mode while multiuser, the administrator must build a kernel with the variable securelevel in the kernel source file /sys/kern/kern_sysctl.c initialized to -1. 
+
+
+	Virtual memory changes 
+
+The new virtual memory implementation is derived from the Mach operating system developed at Carnegie-Mellon, and was ported to the BSD kernel at the University of Utah. It is based on the 2.0 release of Mach (with some bug fixes from the 2.5 and 3.0 releases) and retains many of its essential features such as the separation of the machine dependent and independent layers (the ``pmap''interface), efficient memory utilization using copy-on-write and other lazy-evaluation techniques, and support for large, sparse address spaces. It does not include the ``external pager''interface instead using a primitive internal pager interface. The Mach virtual memory system call interface has been replaced with the ``mmap''-based interface described in the ``Berkeley Software Architecture Manual''(see UNIX Programmer's Manual, Supplementary Documents, PSD:5). The interface is similar to the interfaces shipped by several commercial vendors such as Sun, USL, and Convex Computer Corp. The integration of the new virtual memory is functionally complete, but still has serious performance problems under heavy memory load. The internal kernel interfaces have not yet been completed and the memory pool and buffer cache have not been merged. 
+
+Some additional caveats: 
+
+Because of the disjoint virtual memory (page) and IO (buffer) caches, it is possible to see inconsistencies if using both the mmap and read/write interfaces on the same file simultaneously. 
+
+The semantics of the vfork(2) system call are slightly different. The synchronization between parent and child is preserved, but the memory sharing aspect is not. In practice this has been enough for backward compatibility, but newer code should just use fork(2). 
+
+The format of the sockaddr structure (the structure used to describe a generic network address with an address family and family-specific data) has changed from previous releases, as have the address family-specific versions of this structure. The sa_family family field has been split into a length, sa_len, and a family, sa_family. System calls that pass a sockaddr structure into the kernel (e.g. sendto() and connect()) have a separate parameter that specifies the sockaddr length, and thus it is not necessary to fill in the sa_len field for those system calls. System calls that pass a sockaddr structure back from the kernel 
+(e.g. recvfrom() and accept()) receive a completely filled-in sockaddr structure, thus the length field is valid. Because this would not work for old binaries, the newlibrary uses a different system call number. 
+
+Thus, most networking programs compiled under 4.4BSD are incompatible with older systems. 
+Although this change is mostly source and binary compatible with old programs, there are three 
+exceptions. Programs with statically initialized sockaddr structures (usually the Internet form, a sockaddr_in) are not compatible. Generally, such programs should be changed to fill in the structure at run time, as C allows no way to initialize a structure without assuming the order and number of fields. Also, programs with use structures to describe a network packet format that contain embedded sockaddr structures also require change; a definition of an osockaddr structure is provided for this purpose. Finally, programs that use the SIOCGIFCONF ioctl to get a complete list of interface addresses need to check the sa_len field when iterating through the array of addresses returned, as not all the structures returned have the same length (this variance in length is nearly guaranteed by the presence of link-layer address structures). 
+
+
+		Additions and changes to filesystems 
+
+The 4.4BSD distribution contains most of the interfaces specified in the IEEE Std1003.1 system interface standard. Filesystem additions include IEEE Std1003.1 FIFOs, byte-range file locking, and saved user and group identifiers. 
+
+A new virtual filesystem interface has been added to the kernel to support multiple filesystems. In comparison with other interfaces, the Berkeley interface has been structured for more efficient support of filesystems that maintain state (such as the local filesystem). The interface has been extended with support for stackable filesystems done at UCLA. These extensions allow for filesystems to be layered on top of each other and allow new vnode operations to be added without requiring changes to existing filesystem implementations. For example, the umap filesystem (see mount_umap(8)) is used to mount a sub-tree of an existing filesystem that uses a different set of uids and gids than the local system. Such a filesystem could be mounted from a remote site via NFS or it could be a filesystem on removable media brought from some foreign location that uses a different password file. 
+

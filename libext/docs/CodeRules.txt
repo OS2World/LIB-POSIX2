@@ -1,0 +1,116 @@
+[$Id: CodeRules.txt,v 1.8 2000/09/11 00:18:24 arnd Exp $]
+
+libextensions - CodeRules.txt      *** (C) 2000 Arnd Hanses
+
+Interfaces must be usable for C programs, therefore we must comply to the most 
+recent ANSI C standard (for now we are happy with "C89"= ANSI X3.159-1989).
+This is not a K&R project! 
+Try to write modern and compact C, easily maintainable by those unfamiliar
+to your code.
+Avoid namespace pollution. 
+Ease debugging. 
+Use Posix-conforming interfaces.
+
+Please try to observe namely the following coding rules:
+
+1) Always specify functions explicitly as 'static' or 'extern', in order 
+   to easily discriminate exported library api's and internal helper functions
+   by means of its formal declaration in header and source files.
+   Functions are better discernible as such by immediately following braces:
+
+   	foo(bar); not: foo		(bar).
+
+2) Type safety is paramount. Reduce side-effects and document this by most
+   liberal use of the 'const' qualifier within the code and in public 
+   interfaces. Memory addresses to be passed use 'void*' type (cast internally
+   to correct type), sizes use 'size_t' and offsets use the 'off_t' type.
+
+3) Limit the scope of variables to where they are actually used. Global and
+   static variables must be initialized to 0 or NULL; constants must be
+   qualified as such.
+
+4) Non-standard extensions (i.e. which are not described by Posix, X/OPEN, SUS)
+   to be exported by the library are underscored and must contain at least one 
+   Capital letter, so that they can be easily identified as non-conforming
+   library extensions. Global non-standard symbols, provided only for access
+   from inside the library (private members), are prepended by their
+   doubly underscored module name.
+
+5) All symbols which are not described by the recent ANSI C standard should
+   exist in an underscored variant that the library uses to call them
+   internally. This is to assure redefinitions by application programmers
+   be harmless. The exported alias without underscore should be defined
+   in the header as an 'extern __inline__' function, calling the
+   underscored variant: That one will be optimized out. 
+
+   It should also be defined as an 'extern' library function, so that
+   the '-fnoinline' flag will call the existing library version.
+
+6) Headers and additional text files document the interface. Library modules 
+   describe the actual implementation.
+
+8) Sections with debug code are enclosed with '#ifdef DEBUG' and '#endif'.
+   Use the macros '_dPuts(const char *string)' and
+   '_dPrintf(const char *format, void *arg)' for debugging output.
+   They are defined in various headers.
+
+   While this example:
+
+#ifdef DEBUG      
+	_dPrintf("Checking %s\n",szQueName);	
+#endif      
+
+   is perfectly correct, better just use the simple macro and specify -D_DEBUG 
+   on the gcc command line to include the internal library debugging macros. 
+   This improves readability:
+
+	_dPrintf("Checking %s\n",szQueName);	
+
+9) Comments should follow ANSI C conventions, just for conformance with:
+   'gcc -ansi -pedantic'.
+
+	 "/* bla */", not C++: "// blu"
+
+			=====================================
+
+
+Submitting patches:
+------------------
+
+Beyond the rules for a "clean", portable and - very important - human readable
+programming style you have to respect some other guidelines to
+minimize maintainance work. All your contributions should preferrably
+be in diff format using the "-u" option. e.g.
+  diff -u foo.c.old foo.c >foo.c.diff
+creates a readable diff for a single file, 
+  diff -durbB posix2.cvs posix2.myworkingcopy >bigdiff
+produces a diff of the whole tree against your working copy.
+
+So your work should be like:
+
+  0) First fix defective ASCII with fixtxt. In toplevel (CVSROOT) directory:
+
+	Run make distclean! 
+
+  1) Update from CVS. Yes, I repeat: 
+
+	'cvs -z4 update' 
+
+     _before_ patching!
+
+  2) Apply your changes.
+
+  3) Update again to see whether someone else has meanwhile applied
+     changes to CVS repository. Resolve conflicts if necessary -
+     try to understand why the conflict exists and if you don't: 
+     ask! Yes, again I repeat: 
+
+	'cvs update' 
+
+     _before_ patching! Ask! We created our mailing list for YOU!
+
+  4) Test you code. It has to build! (Supply a small test program.)
+
+  5) Produce a diff.
+
+  6) Submit to Maintainer (Holger Veit).

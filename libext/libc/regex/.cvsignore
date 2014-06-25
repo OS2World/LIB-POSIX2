@@ -1,0 +1,6 @@
+*.dll
+*.a
+*.lib
+*.o
+*.obj
+*.bsd

@@ -1,0 +1,18 @@
+; $Header: /cvsroot/posix2/posix2/libext/extGlob.def.in,v 1.9 2000/11/26 16:43:01 arnd Exp $
+;
+; Experimental DLL: We use single, global and shared DATA segments. So we can 
+; test for possible problems with multi-threading.
+LIBRARY INITGLOBAL TERMGLOBAL
+
+DESCRIPTION
+ '@#(C)P/2 Project and others:Rev0.0.15b#@"BSD extensions-: $Id: extGlob.def.in,v 1.9 2000/11/26 16:43:01 arnd Exp $"'
+
+
+DATA
+ SINGLE SHARED
+
+EXPORTS
+; From ext.obj
+  "_DLL_InitTerm" @1
+  "_libExtensionsGlobalDLL_Revision" @2
+

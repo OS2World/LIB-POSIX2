@@ -1,0 +1,37 @@
+	[$Id: poll.txt,v 1.3 2000/08/06 20:09:35 amai Exp $]
+
+README for poll emulation:
+=========================
+
+Limitations, shortcomings:
+(this list is unfortunately almost longer than the source ...)
+
+
+ - things we can't "do" on our system (see docs)
+ 
+ - thread-safe?
+   :-(
+ 
+ - what happens upon signals??
+   %-\
+ 
+ - limitated to 255(256?) descriptors currently
+   "hardcoded" - it matches some EMX default values used for
+   select. Could be easily raised in the poll sources!
+
+ - passed no real world test.
+   Ok, one might argue it didn't fail for one either ;-)
+
+ - we don't know which handles contribute to the error -
+   but poll() is supposed to tell the user 
+   See source
+   FIXED(?)
+
+ - our capabilities WRT the different types of devices, etc.
+   are limited by select()
+
+ - not performance optimized.
+   I guess some circumstances would demand a highly optimized
+   implementation?!
+
+

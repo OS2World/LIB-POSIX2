@@ -1,0 +1,43 @@
+	[$Id: unistdx.txt,v 1.3 2000/08/06 20:09:35 amai Exp $]
+
+NAME chown - stub functions
+
+SYNOPSIS
+
+     #include <sys/types.h>
+     #include <unistd.h>
+     #include <sys/unistdx.h>
+
+     int chown(const char *path, uid_t owner, gid_t group);  /* stub fn */
+
+DESCRIPTION
+
+     chown() changes the owner and group of a file. (Meaningless on plain 
+     OS/2 with FAT/HPFS.)
+     I leave the details and provide the stub only! 
+     If we assume we don't have any "owners" and "groups" - more precisely 
+     that stat() will always indicate 'root' (0) - it is best to keep 
+     the apps happy and make chown() always return 0 instead of indicating a 
+     failure ... 
+
+
+CONFORMING TO
+
+    chown() conforms to SVr4, SVID, POSIX, X/OPEN and SUSV2
+
+
+IMPLEMENTATION 
+
+     We do not implement, actually. However to be on the safe side for future 
+     enhancements, we don't #define to 0: We create an entry point in 
+     libextensions instead!
+
+  TODO
+
+     A link database, a _posixRedirRoot() function to emulate a Posix file system
+     and real implementations. ;-)
+
+
+AUTHORS and Copyright
+
+    Cf. the sources. Preferably also YOU.

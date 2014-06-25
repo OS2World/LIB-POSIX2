@@ -1,0 +1,43 @@
+	[$Id: rev.txt,v 1.3 2000/08/06 20:09:35 amai Exp $]
+
+NAME:  _libExtensions_rev, _libExtensions_vcmp, _libExtensions_vprt
+	- libextensions revision
+
+SYNOPSIS
+  #include <stdlib.h>
+
+  const unsigned int _libExtensions_rev; 
+  const unsigned int _libExtensions_vcmp; 
+  const char         _libExtensions_vprt[5]; 
+  const unsigned int _libExtensions_env; 
+  
+DESCRIPTION
+
+ o  '_libExtensions_rev'
+
+  This constant contains the libextensions revision index.  The revision 
+  index is a number that is incremented everytime a new libextensions 
+  revision is released.  When the libextensions version number 
+  changes, the revision index is not reset to zero.  If _libextensions_rev 
+  is zero, the revision index is not available.
+
+ o '_libExtensions_vcmp'
+
+  This constant contains the libextensions version number, suitable for 
+  comparing. 
+  
+ o '_libExtensions_vprt'
+
+  This constant contains the libextensions version number, suitable for
+  printing. 
+
+  Example:   printf ("libextensions version: %s\n", _emx_vprt);
+  
+ o '_libExtensions_env'
+
+  This constant contains bits describing the environment your program 
+  is running in:
+
+  0x0020  387 coprocessor present 
+
+  0x0200  Running under OS/2 2.x  (OS/2 2.0, Warp and above)

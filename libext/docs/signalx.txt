@@ -1,0 +1,26 @@
+	[$Id: signalx.txt,v 1.2 2000/08/06 20:09:35 amai Exp $]
+
+NAME sigvec, sigsetmask, sigblock, sigpause - obsolete 4.3 BSD interfaces
+
+SYNOPSIS
+
+    #include <sys/param.h>
+    #include <signal.h>
+
+    int
+    sigvec(int signo, struct sigvec *sv, struct sigvec *osv);
+
+    int
+    sigsetmask(int mask);
+
+    int
+    sigblock(int mask);
+
+    int
+    sigpause(int mask);
+
+DESCRIPTION
+
+    Compatibility interfaces, obsoleted by Posix. 
+    Use standard interfaces, instead!
+

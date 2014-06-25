@@ -1,0 +1,54 @@
+	[$Id: statx.txt,v 1.3 2000/08/06 20:09:35 amai Exp $]
+
+NAME fchmod, stat, fstat, lstat (stub function) - manipulate file status
+
+SYNOPSIS
+
+     #include <sys/types.h>
+     #include <sys/stat.h>
+     #include <sys/statx.h>
+
+     int fchmod(const int filedes, const mode_t mode);
+     int   stat(const char *path, struct stat *buf);
+     int  fstat(int file_descriptor, struct stat *buf);
+     int  lstat(const char *path, struct stat *buf);   /* forwarder fn */
+
+DESCRIPTION
+     fchmod() is the same a chmod(), only that it identifies files by a
+     file descriptor filedes, a small non-negative integer returned by open().
+
+     stat() is the same as in the emx library, plus two additional entries
+     in struct stat: 
+
+  u_long  st_blksize; 	/* preferred blocksize. */
+  u_long  st_blocks; 	/* = st_size / st_blksize  */
+
+     lstat() is the very same as stat() except when a symbolic link 
+     is being specified: While stat() resolves the link, lstat() does 
+     not dereference it.  
+
+CONFORMING TO
+    stat(), fstat() conforms to UNIX, since V7, and also to Posix 1.
+    lstat() conforms to 4.2BSD and later and to SVr4, it appears in SUSV2.
+
+
+IMPLEMENTATION 
+     fchmod() has similar limits as chmod(), therefore read the relevant
+     section in the EMX docs.
+
+     We do not implement lstat(). However to be on the safe side for future 
+     enhancements, we don't #define lstat to stat, even if by default OS/2
+     filesystems do not support symbolic links: We create an entry point for 
+     lstat() in libextensions instead!
+
+  TODO
+     A link database, a _posixRedirRoot() function to emulate a Posix file 
+     system and real implementations. ;-)
+
+
+AUTHORS and Copyright
+    Cf. the sources. Preferably also YOU.
+
+LIMITATIONS
+	Assumes HPFS (512 bytes) for st_blksize in fstat(). Use stat() instead;
+	other file systems may be used.

@@ -1,0 +1,30 @@
+(20000215)
+
+              libExtension TODO list
+              ======================
+
+Here we list some API which are implementations are 
+missing, not properly tested or missing at all.
+Please add any pointers you have to existing implementations,
+even if it's only based on rumours ;-)
+
+
+Incomplete:
+==========
+  - symlink (database, ... someone on emx@  I forgot)
+
+
+Testing:
+=======
+  - poll()
+
+
+Missing:
+=======
+  - flock() -> Perl
+  - g/setpriority (trivial for calling process)
+  - mmap(2) -> ODIN
+  - mkfifo()  -> Octave
+  - msgget(2)
+  - SIGWINCH (upcoming)
+  - wait4(2) 

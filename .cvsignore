@@ -1,0 +1,9 @@
+*.dll
+*.a
+*.lib
+*.o
+*.obj
+*.cmd
+*.exe
+*.log
+*.zip

@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<LINK REV=MADE HREF="mailto:editor@edm2.com">
+<TITLE>EDM/2 - Using The GNU Configure Scripts In OS/2</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#CC0000" VLINK="#993333" BGCOLOR="#FFFBFB"
+  BACKGROUND="../common/images/bg.gif">
+
+<!-- ====================================================== -->
+<!--                           Map                          -->
+<!-- ====================================================== -->
+<MAP NAME="Linkbar">
+<AREA ALT="Feedback" COORDS="190,1,260,14"
+   HREF="mailto:feedback@edm2.com">
+<AREA ALT="Search" COORDS="280,1,335,14"
+   HREF="../common/search.html">
+<AREA ALT="Top" COORDS="355,1,390,14"
+   HREF="../index.html">
+<AREA ALT="Backward" COORDS="400,1,475,14"
+   HREF="scope.html">
+<AREA ALT="Forward" COORDS="490,1,550,14"
+   HREF="mmio.html">
+</MAP>
+
+<TABLE WIDTH="100%">
+<TR>
+<TD VALIGN=TOP WIDTH="15%">
+<IMG BORDER=0 WIDTH=56 HEIGHT=18 ALT="EDM/2"
+  HSPACE=10 SRC="../common/images/edm2sm.gif">
+</TD>
+<TD WIDTH="85%">
+
+<H2>Using The GNU Configure Scripts In OS/2</h2>
+
+Written by <A HREF="../common/authors/ddepriest.html">Dale DePriest</A>
+
+</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="Linkbar" USEMAP="#Linkbar"
+   SRC="../common/images/articlebar.gif">
+
+<P><TABLE WIDTH="100%">
+<TR>
+<TD WIDTH="10%">&nbsp;</TD>
+<TD WIDTH="80%">
+
+<P><H2>Introduction</h2>
+
+<P>This article describes the ability to use GNU configure scripts within the
+OS/2 environment.  These configure scripts are a key tool in permitting the
+automatic configuration of source code among a wide divergence of Unix
+systems.  Extending their use to OS/2 opens the possibility of much more
+high quality and easily available software than we might otherwise enjoy.
+People have been porting Unix applications to OS/2 for years and this
+article hopes to help continue this practice by making the task a bit
+easier.
+
+<P>Of course if you are using a Unix script to configure and port Unix
+applications and utilities you might expect that the tools would depend
+upon a Unix environment.  And this is indeed the case.  Luckily pioneers in
+this effort have already developed most of the tools needed to establish a
+Unix environment for you.  Names like Eberhard Mattes (The E and M of EMX)
+and Kai Rommel have already built many of the tools that you may need.
+Eberhard has supplied and continues to enhance a Unix-like linkable shared
+library layer plus a modified version of the GNU C compiler that supports
+most of the syntax and semantics of the Unix C language.  While EMX
+supplies GCC as part of the installation there is no reason to believe that
+it requires GCC in order to work.  EMX itself is a set of libraries that
+could be linked to any C or C++ compiler.  Kai Rommel has used EMX to port
+many of the Unix utility commands into the OS/2 environment as well.  These
+commands are needed both by the configure scripts and by many of the Unix
+makefiles.  Many other people have contributed to this effort as well and
+many Unix-like commands are available from other sources.
+
+<P><H2>Using The KSH Shell</h2>
+
+<P>In order to run the configure script you will need a Unix shell.  This
+article describes the KSH shell currently released on hobbes and many other
+FTP sites.  It is freely available and you can also obtain the source if
+you wish to build a modified copy for you own use.  Unlike many of the
+earlier porting efforts of Unix code the OS/2 version is fully integrated
+into the source thus providing you the assurance that when the source
+changes, the OS/2 variants will be carried forward.  The sources themselves
+are called pdksh, the public domain korn shell, and implement a very good
+emulation of the original AT&T Korn shell plus many POSIX enhancements.
+The configure script itself, however, does not require any Korn shell
+features but rather depends on the older Bourne shell syntax and semantics,
+of which a Korn shell is a superset.  You should be able to use any good
+implementation of a Bourne shell to run this script.
+
+<P>The shell itself can be called any name you wish.  Its behavior does not
+vary based on the name unlike some other Unix shell programs.  To run the
+configure script it should be named sh.exe.  Using the sources you can
+build many different variations of the shell using options in the
+<CODE>config.h</code>
+file.  A full-blown Korn shell can be built or a complete subset that
+behaves very much like a Bourne shell.  The smaller version is excellent
+for script support.  In the run time release I have provided the full shell
+under the name
+<CODE>ksh.exe</code>
+and the smaller version under the name
+<CODE>sh.exe</code>.
+
+<P>Configure scripts assume the presence of Unix commands so you will need to
+insure that you have the correct selection available for the shell and that
+they are in your current search path.  If you get command not found errors
+when running the script you will need to find (and download if necessary) a
+copy of the appropriate command.  There are several Unix commands that have
+exactly the same names as OS/2 commands so be sure the Unix versions are
+earlier in the search path.
+
+<P>In Unix an executable is tagged with an attribute to make it known to the
+system as an executable.  In OS/2 this is done with an extension.  This can
+lead to unique problems when running the configure scripts.  KSH knows all
+of the standard OS/2 extensions plus .ksh and .sh; and, as a special
+feature, it can even run commands that do not have any extensions.  Most
+often commands in Unix do not have any extensions and scripts either have
+no extension or use the name of the shell as an extension.  This is only a
+Unix convention, not a requirement, and to execute a Unix command you must
+type the exact filename. In OS/2 the .ksh or .sh extension tells the KSH
+that this is an executable shell script.  A file without an extension may
+be either a script or a binary executable.  Scripts need not necessarily be
+a KSH shell scripts however.  The standard Unix
+<CODE>#!</code>
+line at the top of the
+file determines the actual command that will be used to run the script.
+Should the same filename with a different extension exist in the same
+directory KSH will use the extension specified in the script or if no
+extension is specified then the search order is, no extension, .ksh, .sh,
+.cmd, .exe, .com, .bat.  Note that if the script specifies a different
+extension than one of the ones listed it will not be recognized as an
+executable by KSH.
+
+<P><H2>Running Unix GNU Configure Scripts</h2>
+
+<P>KSH can be used to run GNU configure scripts, however, I can't guarantee
+that the results will match the true configuration for OS/2 since this is
+dependent on the way the individual configure scripts are written.  You
+should expect that you may have to hand modify the configure script, the
+results of the configure, or at the very least check the results to insure
+that they look reasonable.  Even in Unix itself the scripts may not always
+correctly identify a particular idiosyncrasy of a particular hardware
+platform configuration.
+
+<P>To set up to run configure scripts you will need to have a copy of KSH
+called
+<CODE>sh.exe</code>
+somewhere in your path and, of course, you should be running
+within a KSH shell.  One of the very early things done by most configure
+scripts is to try and figure out the compiler.  This will usually fail
+since it generally depends on setting the IFS (To understand why, see
+discussion in the KSH
+<CODE>readme.os2</code>
+file on colon versus semicolon as a path
+separator).  To work around this problem simply set CC to the compiler you
+want to use prior to running the script.  For example to use gcc use the
+command:
+'<CODE>export CC=gcc</code>'.
+Most configure scripts couldn't figure out the
+names of OS/2 compilers anyway.  Now you should be able to simply type
+'<CODE>configure</code>'
+and watch it work.  If it seems to fail right off the bat and
+can*t seem to find any commands look in the script and see if PATH is being
+set by the script.  If it is, please just delete that line and try again.
+
+<P>At some point the configure script will build a config.status script to
+perform the final step.  If this is not run using
+'<CODE>sh -c config.status</code>'
+or
+some such command in configure, then it will fail since .status is not an
+OS/2 legal executable suffix.  You can run it manually however by typing
+'<CODE>ksh config.status</code>'.
+This is the command you should use if you need to run
+<CODE>config.status</code>
+later.  If you have problems you should inspect the
+<CODE>config.status</code>
+script and fix it as required.  Using the command:
+<CODE>ksh -x config.status</code>
+will echo the lines as they are executed which should aid in
+debugging.  Running
+<CODE>config.status</code>
+is a good way to reset any of the changes
+you may have made to
+<CODE>config.h</code> or the
+<CODE>Makefile</code>.
+
+<P>Many configure scripts actually build and execute small programs to test
+for certain features of the operating system or compiler.  In OS/2 using
+EMX, the final link step for a program must have the .exe extension tied to
+the executable name or the linker will not link correctly.  A few configure
+scripts already know about this requirement and will work OK, but,
+unfortunately most do not.  You may need to modify the configure script to
+insure the correct executable name.  Once the program is built it can be
+renamed to a name without an extension if KSH is being used to run it since
+often the script also checks to see if a file with this name was created by
+the compiler.  A line similar to the following may work for you if you are
+using a version 2.0 configure:
+
+<PRE><SMALL>
+ac_link='${CC-cc} -o conftest.exe $CFLAGS $CPPFLAGS $LDFLAGS \
+conftest.$ac_ext $LIBS && mv conftest.exe conftest'
+</pre>
+
+<FONT SIZE=2>
+Figure 1)  Modification for using Configure 2.0
+</FONT>
+
+<P>This trick takes advantage of KSH's ability to run a command without an
+extension.  Even with these changes you may still find that configure does
+not correctly identify some OS/2 features.  Many configure scripts reuse a
+line like ac_lnk many times over the course of running the program, however
+some scripts use unique names each time they build a test program.  For
+these configure programs it may be impractical to modify the script.  EMX
+has a feature that permits it to attempt to fake this requirement for
+makefiles and configure scripts.  By setting a compiler variable (usually
+LD, see EMX documentation for details) to include -Zexe you can force the
+link step to build an executable with the .exe extension on it and to
+create an empty file with just the name.  This empty file is meant to
+satisfy Unix makefiles and may fool configure scripts as well.  I say *may*
+because some configure scripts not only check for the existence of the
+executable name but also expect it to have size!  These configure scripts
+wont be fooled.
+
+<P>Unfortunately the KSH ability to run a file without an extension can cause
+a conflict with the EMX feature to automatically build two files with the
+same name but a different extension.  KSH will try and execute the dummy
+file and will fail.  There are several ways correct this problem.  If you
+know the name of the file then an easy solution is to define an alias for
+KSH use.  For example the command
+*<CODE>alias prog=prog.exe</code>*
+would always
+execute
+<CODE>prog.exe</code>
+even if a file named
+<CODE>prog</code>
+were present.  For permanent use
+this alias could be defined in your KSH startup file.  Use of an alias is
+supported by both KSH and SH but is not exported to a script.  Aliasing
+must be reestablished in each child.  Should a more permanent or automatic
+solution be desired, I would recommend getting a copy of the KSH source
+file and customizing the
+<CODE>exec.c</code>
+file to alter the search order.  A working
+example of a search order for configure scripts using the -Zexe option to
+EMX might be (where . represents a file name without an extension):  .ksh,
+.exe, ., .sh, .com, .cmd, .bat.  You may prefer .com ahead of .exe.  While
+this search order wouldn't be intuitive to interactive use it does have
+merits for scripts.  It is also possible to modify KSH so that zero length
+files without an extension would be ignored, and, if there is sufficient
+interest, I could modify the next version.
+
+<P><H2>Building The Executable</h2>
+
+<P>Once you have gotten configure to successfully run, you should find a
+config.h file containing the platform customization flags and a makefile in
+the directory containing the sources.  You may need to edit the config.h
+file either now or as a result of errors that you define during your
+compilation attempt.  In addition you will probably need to edit the
+Makefile.  Makefile edits depend somewhat on which make command you use.  I
+usually use either make from GNU or nmake from IBM.  Both are available
+from hobbes.  At the very least you should insure that the executable name
+ends with the .exe extension or modify the gcc flags to include -Zexe.
+
+<P>It is likely that even with all of the changes and customizations you will
+still need to put some #ifdef statements in the source to get it to perform
+correctly for OS/2 use.  I usually include a -DOS2 option in my makefile
+GCC compiler flags to permit a
+<CODE>#ifdef OS2</code>
+line to be interpreted correctly
+in the source.  Other choices include adding a
+<CODE>#define</code>
+line in
+<CODE>config.h</code>
+or
+using the automatically defined
+<CODE>__EMX__</code>
+variable set by EMX itself.  I find
+the OS2 variable to be the most intuitive when reading the code later.
+Once you have everything done why not share your results with others.
+Often the original author is more than happy to incorporate your changes
+into the original source and with your help, and perhaps a post to Hobbes'
+incoming directory, another great OS/2 program will be available for
+everyone to use. it is then displayed on the output window.
+
+</TD>
+<TD WIDTH="10%">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="Linkbar" USEMAP="#Linkbar"
+   SRC="../common/images/articlebar.gif">
+
+</BODY>
+</HTML>

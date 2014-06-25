@@ -1,0 +1,8 @@
+This is the P/2-Project's root directory. 
+
+A forthcoming physical device driver will mount a POSIX-conforming 
+file system hierarchy below this root directory. Afterwards you will
+be able to do a simple 'make world', 'make install', to create a complete
+posix-emulating subsystem.
+
+Cf. manpage (hier.7bsd) for standard file system hierarchy information.

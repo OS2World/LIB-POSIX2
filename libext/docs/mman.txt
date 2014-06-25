@@ -1,0 +1,41 @@
+	[$Id: mman.txt,v 1.5 2000/08/14 16:13:41 amai Exp $]
+
+NAME mmap, munmap, mprotect, msync - map files into fast memory
+
+SYNOPSIS
+    #define _POSIX_MAPPED_FILES
+    #include <unistd.h>
+    #include <sys/types.h>
+    #include <sys/mman.h>
+
+    void *mmap(void *addr, size_t len, int prot, int flags,
+			int fd, off_t off);
+    int munmap(void *addr, size_t len);
+    int mprotect(const void *addr, size_t len, int prot);
+
+  OR
+    #define _POSIX_MAPPED_FILES
+    #define _POSIX_SYNCHRONIZED_IO
+    #include <unistd.h>
+    #include <sys/types.h>
+    #include <sys/mman.h>
+
+    int msync(const void *addr, size_t len, int flags);
+
+DESCRIPTION
+   Emulation of Posix mapping of files into fast memory.
+   For supported flags and short descriptions see sys/mman.h.
+
+IMPLEMENTATION
+    Cf. the sources for details and current limitations.
+
+CONFORMING TO:
+    Posix.1b
+
+AUTHORS & COPYRIGHT
+    Holger Veith & Contributors to 4.4 BSD. Cf. source for details.
+
+BUGS:
+    Useful yet still experimental. Calling munmap() invalidates the 
+    file descriptor that had been passed to mmap(). Avoid conflicts
+    by not using this file descriptor after a call to mmap().

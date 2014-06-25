@@ -1,0 +1,12 @@
+*.dll
+*.a
+*.lib
+*.o
+*.obj
+*.cmd
+*.exe
+*.log
+*.bsd
+*.def
+*.bak
+exp

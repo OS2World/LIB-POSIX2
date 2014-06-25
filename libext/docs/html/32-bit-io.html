@@ -1,0 +1,647 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<LINK REV=MADE HREF="mailto:editor@edm2.com">
+<TITLE>EDM/2 - 32-Bit I/O With Warp Speed</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#CC0000" VLINK="#993333" BGCOLOR="#FFFBFB"
+  BACKGROUND="../common/images/bg.gif">
+
+<!-- ====================================================== -->
+<!--                           Map                          -->
+<!-- ====================================================== -->
+<MAP NAME="Linkbar">
+<AREA ALT="Feedback" COORDS="190,1,260,14"
+   HREF="mailto:feedback@edm2.com">
+<AREA ALT="Search" COORDS="280,1,335,14"
+   HREF="../common/search.html">
+<AREA ALT="Top" COORDS="355,1,390,14"
+   HREF="../index.html">
+<AREA ALT="Backward" COORDS="400,1,475,14"
+   HREF="wpswithuicl.html">
+
+
+</MAP>
+
+<TABLE WIDTH="100%">
+<TR>
+<TD VALIGN=TOP WIDTH="15%">
+<IMG BORDER=0 WIDTH=56 HEIGHT=18 ALT="EDM/2"
+  HSPACE=10 SRC="../common/images/edm2sm.gif">
+</TD>
+<TD WIDTH="85%">
+
+<H2>32-Bit I/O With Warp Speed</H2>
+
+<P>Written by <A HREF="../common/authors/hveit.html">Holger Veit</A>
+
+</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="" USEMAP="#Linkbar"
+   SRC="../common/images/lastarticlebar.gif">
+
+<P><TABLE WIDTH="100%">
+<TR>
+<TD WIDTH="10%">&nbsp;</TD>
+<TD WIDTH="80%">
+
+<P><FONT COLOR="#669966">[Note: Files can be found
+<A HREF="fast10.zip">here</A>. Ed.]</FONT>
+
+<H2>Introduction</H2>
+
+<P>Well, I have a little bit of a bad feeling.  What I am going to describe in
+this article is something that should not be possible at the level of user
+application programs:  direct I/O.	This is the ability of a user program
+to talk to hardware resources directly, not controlled or even monitored by
+the operating system.
+
+<P>Although it might have been common practice in a simple program loader like
+DOS, it is normally not a good idea in a modern multitasking or multi-user
+system.  In fact, OS/2, Windows NT, and the various UNIX derived operating
+systems, spend considerable efforts to hide this practice from user
+applications, or explicitly prohibit it. The reasons for that are obvious
+and well known:
+
+<UL>
+<LI>User programs could access system resources, that means here hardware
+devices, in an uncoordinated or uncooperative way, and could therefore
+severely influence or even damage data integrity, system stability, and
+security.
+<LI>While the operating system tries to distribute the limited resources in a
+fair way among the various competitors, a program that circumvents the care
+of the operating system, could grab such a resource exclusively.	Even
+worse, it might struggle with the operating system for control, which will
+unlikely have good consequences on the overall system throughput.
+<LI>Needless to say, a malign process like a computer virus could use a
+feature like direct I/O to intentionally destroy data.  However, even with
+good intention, a user program is not immune against software bugs that
+might not only crash the program itself but also take the system with it
+into the abyss.
+</UL>
+
+On the other hand, people usually do not want to have I/O access to write
+improved support for complicated disk or video devices.  Rather they have
+simple I/O devices like data acquisition cards, parallel I/O boards, EPROM
+programmer adapters or alike, that do not come with OS/2 support at all.
+
+<P>Writing a full-blown OS/2 device driver in order to reuse an old 8255 port
+card seems like shooting sparrows with cannons.  In such a case, where
+neither interrupt handling or DMA, nor physical access to adapter memory is
+involved, direct I/O appears to be a feasible alternative.	In the
+following chapter, we will look at the official methods that OS/2 offers to
+do I/O.
+
+<H2>Doing Port I/O: The Front Doors</H2>
+
+<H4>Device drivers</H4>
+
+<P>No doubt, as was already stated, a device driver is the real solution. Keep
+critical tasks away from the user is the rule of the game.	The path to
+this is quite stony, however.
+
+<P>As often criticized, device drivers in OS/2 are still 16 bit code.  This
+has several disadvantages.
+
+<UL>
+<LI>You need to code entirely in assembler, or find a C compiler that still
+produces 16 bit code.  Most of the standard drivers that come with OS/2
+were built with either MASM 5.1 or MSC 6.0.  It is not only the problem
+that IBM relies on products of a competitor here, but simply that these
+products are no longer available in stores, and the successors no longer
+support OS/2. Fortunately, the recent, widely available Watcom 10.0
+compiler is usable for device driver development.
+<LI>Coding in 16 bit throws the developer back into the stone age where he
+has to fight against 64K segments, far and near calls, moving around
+selectors and grouping segments in a certain order.
+</UL>
+
+Nevertheless, one could think about writing a device driver that you can
+use to read and write I/O ports by issuing special DosDevIOCtl
+instructions. Surprisingly, this is an unnecessary enterprise!  Not many
+OS/2 users know that every stock OS/2 system comes with a device driver
+that comes with such a functionality:  TESTCFG.SYS.
+
+<P>Besides some other functions that are beyond the scope of this article,
+TESTCFG.SYS  offers two ioctls, one for reading I/O ports and another one
+for writing.  See table 1 for the description of the functions and the
+simple program fragment in figure 1 for an example.
+
+<PRE><SMALL>
+Device name      &quot;TESTCFG$&quot;
+
+Description      Read data from I/O port
+IOCTL Category	0x80
+IOCTL Function	0x41
+
+Parameter packet	 struct {
+		 USHORT portaddr;
+		 USHORT size;
+	     } param
+
+Data packet      struct {
+		 ULONG dataread;
+	     } data;
+
+Remarks	   size=1: read 8-bit
+	     size=2: read 16-bit
+	     size=3: read 32-bit
+
+Description      Write data to I/O port
+IOCTL Category	0x80
+IOCTL Function	0x42
+
+Parameter packet	 struct {
+		 USHORT portaddr;
+		 USHORT size;
+		 ULONG datawrite;
+	     } param
+
+Data packet      none
+
+Remarks	   size parameter same as for function 0x42 param packet in
+		   &quot;Writing OS/2 2.1 Device Drivers in C&quot; book is wrong!
+</SMALL></PRE>
+
+<SMALL>
+Table 1: Ioctl API of TESTCFG.SYS for doing direct I/O
+</SMALL>
+
+<PRE><SMALL>
+/* direct I/O with TESTCFG.SYS */
+
+#define INCL_DOSFILEMGR
+#define INCL_DOSDEVIOCTL
+#include &lt;os2.h&gt;
+
+HFILE fd;
+ULONG action, len;
+APIRET rc;
+struct {
+	  USHORT port;
+	  USHORT size;
+} par;
+struct {
+	  ULONG data;
+} dta;
+
+rc = DosOpen(&quot;/dev/testcfg$&quot;,
+	  &fd, &action, 0,
+	  FILE_NORMAL, FILE_OPEN,
+	  OPEN_ACCESS_READWRITE | OPEN_SHARE_DENYNONE,
+	  (PEAOP2)NULL);
+/* check error code.... */
+
+par.port = 0x84;		/* use a mostly harmless port */
+par.size = 1;		/* read byte */
+
+rc = DosDevIOCtl(fd, 0x80, 0x41,
+	  (PULONG)&par, sizeof(par), &len,
+	  (PULONG)&dta, sizeof(dta), &len);
+/* check error code.... */
+
+printf(&quot;Data was 0x%lx\n&quot;, dta.data);
+
+rc = DosClose(fd);
+/* needless to say: check.... */
+</SMALL></PRE>
+
+<SMALL>
+Figure 1: Sample code to read a port through TESTCFG.SYS
+</SMALL>
+
+<P>There is one drawback, and we will hear this argument again real soon:	it
+is slow.  Why?
+
+<P>Now see, we are calling this function from a 32 bit user program.  The
+DosDevIOCtl() will enter the kernel through a call gate which is some kind
+of a protected door.  The kernel will then first check the validity of the
+parameter and data packets, identify the target driver to perform this
+function, and then call the appropriate driver entry point.  Note the
+driver is 16 bit code, so the kernel must convert the addresses of the
+parameter and data packets from 0:32 bit user space addresses to 16:16 bit
+device driver addresses.  Finally, the driver itself must decode the
+command and dispatch it to its routines.
+
+<P>I once tried to trace such an ioctl call with the kernel debugger, and
+eventually gave up counting after following some hundred instructions
+without seeing any driver code.  Compare this with a single IN or OUT
+instruction. That's bureaucracy!
+
+<H4>IOPL Segments</H4>
+
+<P>The second method is actually a leftover from earlier OS/2 1.X versions,
+hence it is a 16 bit technique as well.
+
+<P>Let me elaborate here a bit on the method used to prevent I/O access by
+user programs.  The Intel 286 and later (386, 486, Pentium) processors can
+execute code at four different privilege levels.  Because they are nested
+and usually drawn as concentric circles, these levels are frequently
+referred to as privilege rings (or protection rings).  Ring 0 is the level
+with the highest privilege, and ring 3 has the lowest privilege (see figure
+2).
+
+<P><CENTER>
+<IMG SRC="32bit1.gif" HEIGHT=230 WIDTH=377>
+</CENTER>
+
+<SMALL>Figure 2: The privilege rings and their use in OS/2</SMALL>
+
+<P>If a process wants to run with a higher privilege than the one it currently
+has, it must go through a special gate; one might also compare a gate with
+a tunnel or &quot;wormhole&quot;.  There are several types of gates such as
+interrupt, trap, or task gates.  The only interesting type for us is the
+call gate.	A call gate allows a one-way transfer of execution from a
+segment with some privilege to another one with same or higher privilege.
+The other direction, that is from a &quot;trustworthy&quot; high-privileged code
+segment to a less trusted lower-privileged segment, is not possible.  See
+figure 2.
+
+<P><CENTER>
+<IMG SRC="32bit2.gif" HEIGHT=265 WIDTH=306>
+</CENTER>
+
+<SMALL>Figure 3: Allowed and forbidden transactions with call gates</SMALL>
+
+<P>Two bits in the processor status register (the IOPL field) determine the
+level that is necessary to execute I/O CPU instructions.  Any code with
+less than this privilege level will trigger an exception at the first
+attempt to execute such an instruction.  Table 2 lists the affected
+instructions. Certain instructions will even cause an exception if the
+process has the privilege to I/O.  These instructions require ring 0
+privilege.	Table 2 also lists these instructions (386 processor).
+
+<P><TABLE BORDER=1>
+<TR>
+<TH>Instruction is protected and causes an exception...</TH>
+<TH>Affected instructions</TH>
+</TR>
+<TR>
+<TD>if not in Ring 0</TD>
+<TD>LIDT, LGDT, LMSW, CLSTS, HLT MOV DR*, reg / MOV reg, DR* MOV TR*, reg / MOV
+reg, TR* MOV CR*, reg / MOV reg, CR*</TD>
+</TR>
+<TR>
+<TD>if in Real Mode or in Virtual 8086 Mode</TD>
+<TD>All the above plus LTR, STR, LLDT, SLDT, LAR, LSL, VERR, VERW ARPL</TD>
+</TR>
+<TR>
+<TD>if not at IOPL privilege level or higer (in Protected Mode)</TD>
+<TD>All ring 0 instructions plus OUT, OUTS, REP INS, REP OUTS STI, CLI</TD>
+</TR>
+<TR>
+<TD>if not at IOPL privilege level or higher (in Virtual 8086 Mode)</TD>
+<TD>All ring 0 and Virtual 8086 Mode instructions plus INT n (Note 1)
+PUSHF, POPF, STI, CLI, IRET (Note 2)</TD>
+</TR>
+</TABLE>
+
+<SMALL>
+
+<P>Note 1:  INT 3 (opcode 0xcc) and INTO are not affected
+
+<P>Note 2:  I/O instructions are enabled or disabled by the I/O permission map
+in the 386 task state segment
+
+<P>Table 2: Privileged Instructions
+</SMALL>
+
+<P>In OS/2, the required privilege level for I/O is ring 2 or better, and
+tough luck, any user process only runs in ring 3 (figure 2).
+
+<P>In order to get a controlled way to do I/O, the OS/2 developers provided a
+method to execute 16 bit code at ring 2 level.	When the linker produces an
+executable from several object files, it accepts a special attribute for
+code segments under certain circumstances.  This attribute is named IOPL
+and is specified in the segment declaration section of a linker definition
+file (Consult appropriate linker documentation).  The linker then annotates
+the code in a way that every call of a routine in this IOPL segment will be
+directed through a call gate, rather than a simple call.  When such a
+program is loaded into memory for execution, the loader code in the kernel
+will generate a R3-&gt;R2 call gate for each target called in an IOPL segment
+(see call gate X in figure 3).
+
+<P>Each time such a call gate is entered, the processor will gain ring 2
+privilege and lose it again when leaving by a normal return instruction.
+
+<P>Apparently, this looked like a feature which could be abused, so the IBM
+developers restricted it in a way that only segments in a DLL can get the
+IOPL attribute.  This appears to be a built-in feature of the program
+loader, not just the linker, as patching the appropriate tables in the
+executable will not work.
+
+<P>This restriction is not a bad idea, as it is now no longer possible to make
+an executable disguising as a normal program, but doing I/O inside.  There
+must be an accompanying DLL, to arouse suspicion - or at least should do
+so.
+
+<P>This could have been an almost ideal way for moderate I/O - if IBM had
+provided a similar method for 32 bit applications as well.	There is no
+restriction in the processor itself concerning 32 bit I/O, as one might
+suspect; it is an intentional limitation.  Since IBM will not support 16
+bit software any longer in OS/2 for the PowerPC, those unsecure interfaces
+will disappear in the future.
+
+<P>Nevertheless, you can call routines in such a 16 bit IOPL DLL from a 32 bit
+executable, and there are several example files floating around in various
+FTP archives.  The key item here is thunking.  The main problem with
+calling code of another size gender is that the program counter as well as
+the stack pointer needs to be adjusted to the corresponding other size.  If
+address parameters are passed through the stack, these addresses need to be
+converted as well.  This is what a thunking routine does.
+
+<P>Usually the compiler generates such routines automatically when a 16 bit
+routine is declared, and this is why many high- level programmers do not
+encounter them at all.	However, even if they seem to be invisible, they
+nevertheless contribute a considerable share to performance degradation if
+an I/O routine in the IOPL DLL is called from a 32 bit application.
+
+<H2>Doing I/O: Searching for Mouse Holes</H2>
+
+<P>In the last section, we have seen that it is possible to do direct I/O with
+the already available facilities.  The difficulty is just the excessive
+overhead that makes their use quite unattractive, and with the text of the
+preface still in mind, there can be no doubt that this is not incidental.
+
+<P>However, as some of you might know about my ambitious pet project, it was
+indispensable for me to find an extremely fast alternative to the above
+stuff. Although I prefer writing a device driver for that kind of
+applications, it seemed entirely impossible to put a complete Xserver into
+a 16 bit device driver (that beast, with PEX, is as large as 2 MB - 32 bit
+code!).  Moving only the critical parts into a driver might work;
+unfortunately the XFree86 people are too creative for me, so it would be
+expectable that I'd be hurrying to get their recent changes integrated for
+the rest of my life.
+
+<P>So let us discuss possible alternatives.
+
+<H4>Outwitting the Program Loader?</H4>
+
+<P>As we have seen in the discussion of the IOPL mechanism, the bottleneck is
+the thunking code.  Interestingly, there exist types of call gates that can
+mediate among 32 and 16 bit code and do the necessary conversion of the
+program counter and stack pointer automatically.  Unfortunately, the
+program loader refuses to make them for us.  Likewise, there seems to be no
+chance to have it create a 32->32 bit call gate.  A brute force approach
+could be trying to identify the call gates it made for us and redirect them
+to the routines that we want to run with privilege.  Since we need certain
+instructions to manipulate the GDT or LDT (more on that later), this is not
+possible from a user program, because the kernel protects these structures
+well in a ring 0 segment.  Similar to the restriction not to pass a call
+gate in the wrong direction, a process cannot read, let alone write, data
+of a higher ring level.  This is not a real problem, if we have an
+accomplice with sufficient rights to do the dirty work for us:  a device
+driver.
+
+<P>However, besides being a bad hack, such a solution is still half-hearted.
+Once we find a method to manipulate call gates, we no longer need to have
+this code separated in a DLL, as with the IOPL anachronism, but we could
+keep it in the executable itself.  Furthermore, while we are on this way,
+couldn't we just manipulate the code segment of the user process into a
+ring 0 one?  Let us think about this possibility.
+
+<H4>User Processes at Ring 0?</H4>
+
+<P>During reading, you might have thought about the question how the processor
+knows which privilege the currently executed code has, and where it keeps
+this information.  This is pretty simple in protected mode:  somewhere in
+memory there are two tables that describe the location, size and properties
+of each memory segment.  They are called global descriptor table (GDT) and
+local descriptor table (LDT).  While the GDT describes system wide
+structures, there is usually an LDT for each process in the system.  Two
+special registers of the CPU, GDTR and LDTR, point to the beginning of the
+tables.  Each table is an array with elements of eight bytes in size.  The
+index into these arrays is fairly simple:  it is formed from the upper 13
+bits of the 16 bit segment registers (CS, DS, ES, SS, FS, GS).  Bit 2 of
+these registers distinguishes between LDT and GDT, and the two lowest bits
+describe the current privilege the CPU is running.  What is most important
+is that any segment descriptor in the tables also contains two bits that
+determine the privilege level the code runs under.
+
+<P>So the way to go seems clear:  get the content of the CS register, find the
+corresponding GDT or LDT entry, and switch the privilege bits to ring 0.
+This is possible.  However, this game will likely end very fast with a trap
+and the register display on the text mode screen.  Why?
+
+
+<P>We have seen in figure 3 that privileged ring 0 code will never execute
+less privileged code.  However, certain system or application DLLs required
+by the user program still have ring 3 level.  So the unfortunate
+consequence is:  if your user program has privileges, it will lose the
+ability to call several system functions.  The immediately upcoming flash
+of an idea of promoting the system and user DLLs to the same level as well,
+is hopefully not meant seriously, as it will end up with all software
+running privileged.
+
+<P>It therefore appears that any trick to raise the privilege of the user
+process introduces more problems rather than solving them.	Let us try to
+approach the problem from a totally different side.  Maybe we could reduce
+the overhead of performing functions in a device driver. A Back Door into a
+Driver: DevHlp_DynamicAPI
+
+<P>Time to dive a bit deeper into a device driver.  The kernel provides a set
+of routines known as device helper functions to a device driver.	One of
+these helpers appears particularly attractive, as it promises to create a
+ring 0 gate directly into a device driver.  So the idea is to build the I/O
+functions into the driver and create such a dynamic API entry point.  This
+will return a GDT selector that a user process can enter with an indirect
+intersegment call instruction.  Estimating the overhead, this should be
+considerably faster than the bureaucratic way of TESTCFG.SYS.
+
+<P>At least that's how it works in theory.
+
+<P>In fact, I programmed it this way, and it worked, but it did not even reach
+the slow speed of TESTCFG.SYS.  Careful single stepping showed the
+following:	the DevHlp_DynamicAPI  created the call gate, but the gate did
+not point straight to the driver routine I wrote for the I/O access.
+Instead, it pointed to somewhere in the kernel, into a routine DYNAM_API_4.
+This entry point then performed almost all the fiddling I observed earlier
+when tracing the ioctl of TESTCFG.SYS. What was even worse was what the "4"
+in the label of the first routine told me.  I had broached a scarce
+resource.  Analysis showed that there are only 16 of these entry points
+available system wide, and mine was already the fifth one in use.  I have
+not the slight idea about the other four clients, but it does not seem to
+be a good idea to deliberately use up one of those expensive and rare
+interfaces.
+
+<P>But in principle, the idea was correct.
+
+<H2>/DEV/FASTIO$ - the Final Way</H2>
+
+<P>Okay.  We just managed to get a transforming (32-&gt;16bit) call gate, that
+just happens to point to the wrong address.  It was a matter of seconds to
+find the address of the corresponding GDT entry, and redirect it to the
+expected position.  A kernel debugger is really a neat tool for the hacker.
+It worked!
+
+<P>At this point, calling the DevHlp_DynamicAPI function becomes useless, and
+will just occupy a later unusable entry point in the kernel.  A quick look
+into the list of device helper functions offers the function
+DevHlp_AllocGDTSelector.  We acquire a default GDT selector for exclusive
+use by the driver, and &quot;adjust&quot; it to form a 32-&gt;16 bit R3-&gt;R0 call gate into the I/O routine section of the driver.
+
+<P>Have a look at the code fragment in the FASTIO$ driver (figure 4) which
+does it all.
+
+<PRE><SMALL>
+          .386p
+_acquire_gdt   proc  far
+      pusha
+
+      mov     ax, word ptr [_io_gdt32]          ; get selector
+      or      ax,ax
+      jnz     aexit                             ; if we didn't have one
+                                                ; make one
+      xor     ax, ax
+      mov     word ptr [_io_gdt32], ax          ; clear gdt save
+      mov     word ptr [gdthelper], ax          ; helper
+
+      push    ds
+      pop     es                                ; ES:DI = addr of
+      mov     di, offset _io_gdt32              ; _io_gdt32
+      mov     cx, 2                             ; two selectors
+      mov     dl, DevHlp_AllocGDTSelector       ; get GDT selectors
+      call    [_Device_Help]
+      jc      aexit                             ; exit if failed
+
+      sgdt    qword ptr [gdtsave]               ; access the GDT ptr
+      mov     ebx, dword ptr [gdtsave+2         ; get lin addr of GDT
+      movzx   eax, word ptr [_io_gdt32]         ; build offset into table
+      and     eax, 0fffffff8h                   ; mask away DPL
+      add     ebx, eax                          ; build address in EBX
+
+      mov     ax, word ptr [gdthelper]          ; selector to map GDT at
+      mov     ecx, 08h                          ; a single entry (8 bytes)
+      mov     dl, DevHlp_LinToGDTSelector
+      call    [_Device_Help]
+      jc      aexit0                            ; if failed exit
+
+      mov     ax, word ptr [gdthelper]
+      mov     es, ax                            ; build address to GDT
+      xor     bx, bx
+
+      mov     word ptr es:[bx], offset _io_call ; fix address off
+      mov     word ptr es:[bx+2], cs            ; fix address sel
+      mov     word ptr es:[bx+4], 0ec00h        ; a r0 386 call gate
+      mov     word ptr es:[bx+6], 0000h         ; high offset
+
+      mov     dl, DevHlp_FreeGDTSelector        ; free gdthelper
+      call    [_Device_Help]
+      jnc     short aexit
+
+aexit0: xor     ax,ax                           ; clear selector
+      mov     word ptr [_io_gdt32], ax
+aexit:  popa                                    ; restore all registers
+      mov     ax, word ptr [_io_gdt32]
+      ret
+_acquire_gdt    endp
+</SMALL></PRE>
+
+<SMALL>
+Figure 4: Initialization routine of FASTIO$ driver
+</SMALL>
+
+<P>Since a device driver is initialized in ring 3, this routine does not work
+during startup.  Rather, the driver will call this code once the first time
+some client opens the device.  Thus, to use the driver, a small routine
+io_init() needs to be called first.  Refer to the file iolib.asm that comes
+with this issue of EDM/2.
+
+<P>A final improvement:  Usually, C code passes arguments on the stack. A call
+gate can be configured to copy these parameters over to the new ring. But
+why should we do this?	For really fast I/O access we pass the data in
+registers.	This allows for direct replacement of I/O instructions in
+assembler code by a simple indirect call as shown in figure 5. The address
+of the indirect call is set up by the above mentioned io_init() procedure.
+
+<PRE><SMALL>
+EXTRN   ioentry:FWORD
+  :
+MOV	  DX, portaddr
+MOV	  AL, 123
+MOV	  BX, 4		; function code 4 = write byte
+CALL	  FWORD PTR [ioentry]
+  :
+</SMALL></PRE>
+
+<FONT SIZE=2>
+Figure 5: Calling I/O from assembler
+</FONT>
+
+<P>If the code needs to be called from C, we simply write a small stub that
+wraps a stack frame envelope around it, just as shown in figure 6.
+
+<PRE><SMALL>
+; Calling convention:
+;	  void c_outb(short port,char data)
+;
+;
+	  PUBLIC  _c_outb
+	  PUBLIC  c_outb
+_c_outb PROC
+c_outb:
+	  PUSH    EBP
+	  MOV     EBP, ESP		    ; set standard stack frame
+	  PUSH    EBX			    ; save register
+	  MOV     DX, WORD PTR [EBP+8]    ; get port
+	  MOV     AL, BYTE PTR [EBP+12]   ; get data
+	  MOV     BX, 4			    ; function code 4 = write byte
+	  CALL    FWORD PTR [ioentry]     ; call intersegment indirect 16:32
+	  POP     EBX			    ; restore bx
+	  POP     EBP			    ; return
+	  RET
+	  ALIGN   4
+_c_outb ENDP
+</SMALL></PRE>
+
+<SMALL>
+Figure 6: A C callable I/O function
+</SMALL>
+
+<P>The file iolib.asm  contains a set of functions c_inX() and c_outX() for
+using I/O from any 32 bit compiler that supports the standard stack frame.
+The files iolib.a and iolib.lib are precompiled versions; the file iolib.h
+contains the C prototypes.
+
+<P>In the complete driver, I gave up a small amount of the theoretically
+reachable performance.	There are six basic I/O operations: IN and OUT
+instructions exist for transferring bytes, 16 bit words and 32 bit long
+words.  To become really fast, one would have to provide a separate GDT
+selector for each of them.  In a typical OS/2 system, this should not be a
+problem.  However, if now everyone would start to add more routines, each
+with its own entry point, this resource could become rather quickly a
+scarce one.  So I spent a function code, to be passed in the BX register,
+to multiplex the six functions into a single GDT selector.	Refer to the
+io_call entry point in the fastio_a.asm driver source file.
+
+<H2>Conclusion</H2>
+
+<P>The article demonstrated how a specialized device driver was used to assist
+a user process in performing direct I/O.	The final overhead, compared to a
+pure device driver or a DOS program implementation, is just the CPU cycles
+of the indirect intersegment call through the call gate and the return
+instruction.  Every other available method significantly adds a performance
+penalty.  This also holds for I/O in a DOS Box, which was not explained in
+this article.  It is to be expected, however, that this method will not be
+available any longer in future Power PC systems, so avoid the demonstrated
+trick unless absolutely necessary.
+
+</TD>
+<TD WIDTH="10%">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="" USEMAP="#Linkbar"
+   SRC="../common/images/lastarticlebar.gif">
+
+</BODY>
+</HTML>

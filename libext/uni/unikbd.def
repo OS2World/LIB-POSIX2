@@ -1,0 +1,13 @@
+;
+; unikbd.def (created by emximp)
+;
+LIBRARY UNIKBD
+EXPORTS
+  UniCreateKeyboard                @1
+  UniTranslateKey                  @6
+  UniQueryKeyboard                 @3
+  UniUntranslateKey                @8
+  UniResetShiftState               @4
+  UniDestroyKeyboard               @2
+  UniUpdateShiftState              @5
+  UniTranslateDeadkey              @7

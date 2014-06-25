@@ -1,0 +1,7 @@
+[$Header: /cvsroot/posix2/posix2/libext/HIER.dir,v 1.1 2000/11/17 19:24:17 arnd Exp $]
+
+This directory serves as the subtree for Arnds first version of the
+libext stuff. Please put everything related to EMX libextensions under 
+this directory for now.
+
+holger.veit@gmd.de

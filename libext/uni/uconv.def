@@ -1,0 +1,12 @@
+;
+; uconv.def (created by emximp)
+;
+LIBRARY UCONV
+EXPORTS
+  UniUconvToUcs                    @2
+  UniMapCpToUcsCp                  @10
+  UniUconvFromUcs                  @3
+  UniSetUconvObject                @8
+  UniFreeUconvObject               @4
+  UniCreateUconvObject             @1
+  UniQueryUconvObject              @7

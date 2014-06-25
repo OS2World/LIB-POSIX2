@@ -1,0 +1,119 @@
+	[$Id: itimer.txt,v 1.5 2000/08/06 20:09:35 amai Exp $]
+
+NAME:  getitimer, setitimer - Crude itimer implementation 
+
+SYNOPSIS
+       #include <sys/time.h>
+       #include <sys/itimer.h>
+
+       struct timeval {
+         long tv_sec;
+         long tv_usec;
+       };
+
+       struct itimerval {
+           struct timeval it_interval;    /* next value when reset */
+           struct timeval it_value;    /* current expiration value */
+        };
+
+        int getitimer(const unsigned which, struct itimerval *it);
+        int setitimer(const unsigned which, const struct itimerval *it,
+                                    struct itimerval *oit);
+
+     MACROS
+      _itOneIsSet(const struct itimerval it)
+      _itIntvlIsSet(const struct itimerval it)
+      _itClear(struct itimerval it) 		/* Zero struct itimerval it */
+      _itSetValue(const struct itimerval it,    	/* Set it value to microseconds */
+              const unsigned long micro-seconds)
+      _itSetInterval(const struct itimerval it, /* Set it to micro-seconds */
+              const unsigned long micro-seconds)
+      _tv2mSec(struct timeval tv)  - Convert 'struct timeval' to 
+                                       microseconds (32-bit signed)
+      _itimeradd(const struct timeval *a, const struct timeval *b, struct timeval *result)
+      _itimersub(const struct timeval *a, const struct timeval *b, struct timeval *result)
+
+DESCRIPTION
+  o getitimer(): 
+    Get Remaining Time on Timer 'which' and store to the adress 'it' points to.
+
+  ERRORS
+        EFAULT - Argument no valid pointer to struct itimerval 
+        EINVAL - Invalid timer selection argument
+        ENOSYS - Updating functionality not (yet) implemented on this system
+
+  o setitimer(): 
+    Set the interrupt timer 'which' with values pointed to by 'it'. Store old
+    values to the adress pointed to by 'oit'. Resetting with 'it.value' 0 stops
+    all timing. Use the _itClear macro to zero 'it' before calling setitimer().
+    To prevent event losses, always stop timings before reset to another value.
+
+  ERRORS
+        EFAULT - Argument no valid pointer to struct itimerval 
+        EINVAL - Invalid timer selection argument
+        ENOSYS - Functionality not implemented on this system
+        exitcode 99 - fatal error in asynchronous alarm thread
+        See kill() doc's and related interfaces for more diagnostics.
+
+IMPLEMENTATION
+     ITIMER_VIRTUAL  and ITIMER_PROF are not really implemented; they just measure real 
+     time only. Fix me !
+
+     We start (or stop) OS/2 asynchronous timers 'which' once (single shot timer) 
+     or within specified interval (interval timer), respectively. They post an event 
+     semaphore, the specified interval of time having expired. Upon notification, the 
+     asynchronously waiting alarm thread generates SIGALARM. The hardware constant 
+     _IT_TIMING_GRANULARITY is subtracted automatically from the interval values.
+
+     The alarm generation thread runs at timecritical priority as other processes or 
+     threads may depend on the service's real time abilities. Stopping has higher priority 
+     than alarming (we use a critical section); no unwanted alarm will be generated. A 
+     (positive) side effect is that any unwanted intermediate timer events will be lost. 
+     If you experience other notifications of event losses (can happen under extremely 
+     heavy system load) you may want to add 
+
+	'SET PRIORITY=ABSOLUTE' (config.sys).
+
+     Be warned that in this case PM focus will be ignored.
+
+
+AUTHORS
+	(C) Arnd Hanses, Alexander Mai.  The code may be used for any purpose,
+        provided we will be exempt of ony liability and this disclaimer is not
+        removed.
+           Though it's released into PD we would appreciate to see any 
+           enhancements/fixes that you will apply.
+           Thanks in advance!
+
+HINTS
+      o compile/link _everything_ with -Zmt (you should do so for _all_ of your projects)
+
+      o Link with -Zbsd-signals !
+        (well, probably necessary.  Check for sigaction() in the code and 
+         read the appropriate EMX docs)
+
+      o Check that the source is using sigaction() exclusively and do not 
+         mix signal() with it or watch out to link with -Zbsd-signals !
+
+      o If the calling thread is thread #1 (of the current process)
+         it will work as expected, a SIGALRM will be raised there.
+         If not, the sigaction()-defined handler will be called, i.e.
+         the handler will be called from a different (the itimer-)thread.
+  
+        Note that for X11 software it is currently necessary to make
+        all X calls from within a single thread. Since this is usually
+        thread #1, make sure this is also calling setitimer().
+
+     o The source may not be thread-safe itself yet! Test it and report bugs or 
+        success.
+
+     o You may want to redefine the granularity constant according to your
+        hardware and recompile the library. Prototype:
+
+     #define _IT_TIMING_GRANULARITY 1000UL /* (micro-seconds; a hardware constant) */
+
+     o For a faster interface re-compile without defining the DEBUG macro.
+
+     o Read docs/html/timing.html for a better general understanding.
+
+<Arnd.H.Hanses@rz.ruhr-uni-bochum.de>

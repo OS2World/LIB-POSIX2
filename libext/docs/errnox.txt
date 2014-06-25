@@ -1,0 +1,41 @@
+	[$Id: errnox.txt,v 1.3 2000/08/06 20:09:35 amai Exp $]
+
+NAME:  errno, _rc2Errno - number of last error
+
+SYNOPSIS 
+       #include <errno.h>  
+       #include <sys/errnox.h>  
+
+ DO NOT EXPLICITLY DECLARE
+       #define errno (*_errno())
+       extern int *_errno(void);
+       const char *const sys_errlist[];
+       const int sys_nerr;
+
+ EXTENSIONS [not portable, interface may change]
+       #define OS2_API32
+       #define INCL_DOS
+       #include <os2.h>  
+
+       int _rc2Errno(APIRET rc);
+
+DESCRIPTION
+       ANSI C90 errno is a modifiable thread-local lvalue of type int,
+       indicating the last error. It is usually implemented as a macro.
+
+  NOTES
+       Successful library calls are never allowed to change errno.
+       To determine if an error occured, application programs must zero
+       errno before calling a library function.
+
+IMPLEMENTATION
+       See sys/errno.h for available errno values.
+
+       The _rc2Errno() macro translates kernel error return codes
+       to ANSI errno values. This interface may change and is not portable.
+
+BUGS
+       Historic implementations of Unix-like operating systems incorrectly
+       require the definition of 'int errno'. This violates the ANSI 
+       standard and is not allowed in this implementation.
+

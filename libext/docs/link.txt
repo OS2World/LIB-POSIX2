@@ -1,0 +1,56 @@
+	[$Id: link.txt,v 1.1 2000/08/21 13:36:21 amai Exp $]
+
+NAME 	link, symlink, _cpfile - Emulate the creation of hard and soft links
+
+SYNOPSIS
+    #include <unistd.h>  [here we may find the system's version]
+    #include <sys/unistdx.h>  
+
+    int link(const char *oldname, const char *newname); /* stub, sets EPERM */
+    int symlink(const char *oldname, const char *newname); /* stub, sets EPERM */
+    int _cpfile(const char *oldname, const char *newname); /* copy identically */
+
+ OR
+    #define _CPYFILE_FOR_SYMLINK
+    #include <unistd.h>  [here we may find the system's version]
+    #include <sys/unistdx.h>  
+
+    int link(const char *oldname, const char *newname); /* copy identically */
+    int symlink(const char *oldname, const char *newname); /* copy identically */
+
+DESCRIPTION
+     link() / symlink() return (-1) and set errno accordingly. 
+     _cpfile() creates newname as an identical clone of oldname.
+
+     If _CPYFILE_FOR_SYMLINK is defined, on the contrary, link() / symlink() 
+     copies oldname to newname, while updating date and time attributes.
+     Modifying or deleting one of the files leaves the other one untouched.
+     Expect problems with certain ill behaving programs, which might mix 
+     oldname and newnmame.
+
+RETURN
+     If successful, _cpfile() (and the aliased link() / symlink()) return (0).
+     link() / symlink() always return (-1) and set errno accordingly. 
+
+
+ERRORS
+
+    EPERM: as FAT and HPFS do not allow symbolic links. For more general errors,
+           cf. fopen(), access().
+
+
+IMPLEMENTATION
+
+      symlink() is implemented as a macro, calling the stub symlink1() or the
+      emulation function symlink2(), if _CPYFILE_FOR_SYMLINK has been defined
+      previously.
+
+  TODO
+
+     A link database, a _posixRedirRoot() function to emulate a Posix file system
+     and real implementations. ;-)
+
+
+AUTHORS and Copyright
+
+    Cf. the sources. Preferably also YOU.

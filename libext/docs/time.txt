@@ -1,0 +1,28 @@
+	[$Id: time.txt,v 1.1 2000/08/06 20:22:07 amai Exp $]
+
+NAME
+     timezone - return the timezone abbreviation
+
+SYNOPSIS
+     #include <tzfile.h>
+
+     char *
+     timezone(int zone, int dst)
+
+DESCRIPTION
+     This interface is for compatibility only; it is impossible to reliably
+     map timezone()'s arguments to a time zone abbreviation (see ctime(3)).
+
+     The timezone() function returns a pointer to a time zone abbreviation for
+     the specified zone and dst values.  zone is the number of minutes west of
+     GMT and dst is non-zero if Daylight Saving Time is in effect.
+
+SEE ALSO
+     ctime(3)
+
+HISTORY
+     A timezone() function appeared in Version 7 AT&T UNIX.
+
+BUGS
+
+     You will be warned to replace any timezone() calls by ANSI C localtime().

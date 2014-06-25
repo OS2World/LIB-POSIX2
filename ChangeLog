@@ -1,0 +1,183 @@
+		[$Id: ChangeLog,v 1.34 2000/11/27 18:13:42 arnd Exp $]
+ 
+2000/03/14 LIBREVISION 0.01
+	Initial version (arnd)
+2000/03/22
+	added fixcrcr utility and missing Makefiles in libext/uni (veit)
+
+2000/03/24 LIBREVISION 0.02
+	big change: (arnd)
+	beautified fixcrcr.c, more docs, added syslog/drand/valloc/dlfcn,
+	more headers, added some functions from EMX stat.c, added some
+	i387 libm asm funcs, added a math test vector
+2000/03/29 
+	additions: (arnd)
+	signal,resource,time header files and man pages
+	Updated CodeRules
+	Added Id lines to various files
+	Support for itimer and daemon
+	Misc fixes
+
+2000/04/03 LIBREVISION 0.03
+	additions: (arnd)
+	more BSD man2 docs, signal(3) docs
+	some missing headers (limits, signal, cdefs, itimer, resource)
+	signalx.c was missing in CVS
+	popen.c
+	fixed a few Makefiles
+	more CVSIds in files
+
+2000/04/17 LIBREVISION 0.04 (0.04a)
+	additions: (arnd)
+	more docs, several sys headers from BSD
+	regex support, some more stdlib: a64l, quad, tsearch
+	sysconf support
+	test for popen
+	renamed fixcrcr.exe to fixtxt.exe
+2000/04/18 (0.04b)
+	additions: (arnd)
+	err* stuff, __volatile__ macro fixed
+	several minor CVS-Id changes
+	msginfo structure renamed (clash with macro)
+	removed timext.h
+	_getPosixOS2Root cast fixed
+
+2000/04/26 LIBREVISION 0.05
+	additions: (arnd)
+	perror, vis, man pages
+	declare several arrays as pointers rather than []
+	various conformance tests for FP and regex
+	finally remove timext.h :-)
+	set several constants from param.h which where hardcoded before
+	init some local variables in regcomp to NULL
+	empty getloadavg
+	added some assembler math functions (i387math.S) from libgcc
+	regexp debug function
+
+2000/05/02 LIBREVISION 0.06
+	additions: (arnd, Stefan Neis, Ralf Barkow)
+	i387math.S fixes for acos/asin/exp from FreeBSD (neis)
+	move fcntl.h after sys/types.h (barkow) and sys/stat.h (arnd)
+	man pages: poll,bitstring,cat*,get*,killpg,math,hz,intro9
+	i386 specific float.h, ieee.h->ieeefp.h
+	nls support,killpg declaration, 
+	IPC and SHM fixed,zlib integration
+	mmap from BSD removed, nls messages for different languages
+	sysconf fixes
+	tests for db,shm
+2000/05/05
+	Math update (Cephes Math Lib), addition of SYS-facitilities.txt
+	moved drand
+	don't use gcc builtins
+	handling of infinity
+	test for floatingpoint funcs, consistency test
+2000/05/08
+	Math update s_tanh.c (neis)
+2000/05/12
+	Fix to stdio and unistd headers to make C++ happy (neis)
+
+2000/05/15 LIBREVISION 0.07
+	additions: ctype, libgen,
+	docs for mmap, man5 pages
+	tools: the ultimate editor (porting example), pmake
+2000/05/17
+	Minor update (arnd)
+	additions: 4.3 compatible regex, realpath, nice
+	more manpages
+	HowTo pages for some OS/2 stuff
+2000/05/31
+	Update rev007b (arnd)
+	fixcrcr.c: added check to detect binaries (\0 bytes in text)
+	changed librevision format in dll.c
+	added several EDM/2 articles and moved html files to docs/html
+	some more manpages
+	More stuff to FAQ
+	renamed some fdlibm functions to __fdlibm
+	__STRICT_ANSI__ removed from some defines
+	register in prototypes removed
+	itimer management improved
+	added getsubopt,l64a,mergesort,bm,strlcpy,strmode,strsep
+	non-Posix string extensions: strcasecmp etc.
+2000/06/13
+	math.h _LIB_VERSION var moved (neis)
+2000/07/06
+	minor changes of defs in math.h and limits.h for LONG LONG support
+	(arnd)
+
+Alpha #1 released
+
+2000/07/24
+	missing stuff for tools/pmake (arnd)
+2000/07/25
+	missing newline character added in some headers (amai)
+	OpenBSD version of db added (arnd)
+	misc fixes: headers, sources, docs (arnd)
+2000/07/28
+	<poll.h> added, minor updates for docs (amai)
+
+2000/07/29 LIBREVISION 0.09
+	lockf() added: not functional yet (see fcntl() in EMX) (arnd)
+	timezone stuff added (arnd)
+        Minor overall fixed (Makefiles, docs) (amai)
+
+Alpha #2 released
+
+2000/08/06
+	Update rev009b
+	time.h added, mmap fixes (arnd)
+	removed #warnings from some headers - will make autoconf happy (arnd)
+2000/08/08
+	Update rev009c
+	signgam added to libm (arnd)
+	plain text version of FAQ removed in favour of HTML version (arnd)
+	Makefile fixes (arnd, amai)
+	[minor fixes to Makefiles and documentation are not always
+	 logged here!]
+
+2000/08/14 LIBREVISION 0.0.10
+	misc fixes for libext (move some stuff in according subdirectories,
+	dirent stuff, ...)   (arnd)
+	Add big tree of utilities to tools/
+2000/08/14 LIBREVISION 0.0.11
+	few minor fixes for libExt (arnd)
+	Modifications for Makefiles, make use of .mk files (arnd)
+	"Missing" stuff in tools/ from rev 010 (arnd)
+	working copy of rename(); tests for rename() and stat() (amai)
+2000/08/15 LIBREVISION 0.0.11a
+	few minor fixes for libExt; cleanup of directories (arnd)
+	add data files to src/share (arnd)
+	misc fixes for tools/ tree; added find(1) (arnd)
+2000/08/18 LIBREVISION 0.0.11b
+	Misc changes and additions; more files moved location (arnd)
+	(In an early state this release was messed up in CVS!)
+2000/08/19 LIBREVISION 0.0.12
+	Misc stuff as usual. Mainly Makfiles this time,
+	introduce two dlls instead of the single one
+      change directory structures a bit (arnd)
+2000/08/19 LIBREVISION 0.0.12a
+2000/08/21 LIBREVISION 0.0.12b
+2000/08/23 LIBREVISION 0.0.12c
+	Dirent headers, glob* + misc stuff (arnd)
+2000/08/26 LIBREVISION 0.0.13
+	Build up basic directory structures (arnd)
+      Add calendar and rmdir to tools/ as well as some manpages (arnd)
+      Fixes/additions to libext
+2000/09/09 LIBREVISION 0.0.14
+      Add asa and printenv to tools/ as well as some manpages and 
+      docs (arnd).
+      Fixes/additions to libExt (arnd):
+	1) New directory libext/libc/sys for modules that emulate BSD system 
+	calls in a safer and more compatible way. Moved several ones.
+	2) sys/mm.c enhanced and prepared for later split that will be 
+	necessary for linking into a run-time DLL. New function 
+	mprotect(). Now mmap() works with MAP_SHARED.
+	3) sys/statx.c enhanced: New function statfs(). Several headers 
+	adapted: sys/vfs.h, sys/statfs.h, sys/mount.h.
+2000/10/11 LIBREVISION 0.0.14a (arnd)
+	more changes of mm.c (MAP_SHARED/MAP_FIXED better supported)
+	cleanup of directory structure (move several modules to libc/sys/)
+2000/11/18 LIBREVISION 0.0.15
+	SUN rpc experimental support added, more network fn's. Experimental 
+	wait3/4() added (arnd).
+2000/11/27 LIBREVISION 0.0.15a/b
+	Experimental SUN yp added. Header and Makefile cleanup (arnd).

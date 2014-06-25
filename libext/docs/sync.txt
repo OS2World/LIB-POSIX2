@@ -1,0 +1,17 @@
+	[$Id: sync.txt,v 1.3 2000/08/06 20:09:35 amai Exp $]
+
+
+NAME:     sync - fight paranoia, commit cache to disk 
+
+SYNOPSIS: 
+       #include <unistd.h>  [here we may find the system's sync()]
+
+       int sync(void); 
+
+RETURNS: 
+        sync() always returns 0
+
+IMPLEMENTATION:
+	sync() uses DosShutdown(0). Commiting buffers may take 
+           several minutes, assuming a heavily loaded system.
+

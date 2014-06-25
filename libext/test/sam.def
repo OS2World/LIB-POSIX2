@@ -1,0 +1,6 @@
+LIBRARY sam INITINSTANCE TERMINSTANCE
+DESCRIPTION 'This is a test DLL: sam.dll'
+EXPORTS
+  my2
+  mysin
+

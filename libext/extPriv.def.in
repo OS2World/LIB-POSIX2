@@ -1,0 +1,16 @@
+; $Header: /cvsroot/posix2/posix2/libext/extPriv.def.in,v 1.9 2000/11/26 16:43:01 arnd Exp $
+;
+; Experimental DLL: We use single, global and shared DATA segments. So we can 
+; test for possible problems with multi-threading.
+LIBRARY INITINSTANCE TERMINSTANCE
+
+DESCRIPTION
+ '@#(C)P/2 Project and others (see sources):Rev0.0.15b#@"BSD extensions -: $Id: extPriv.def.in,v 1.9 2000/11/26 16:43:01 arnd Exp $"'
+
+DATA
+ MULTIPLE NONSHARED
+
+EXPORTS
+; From dllPriv.c
+  "_libExtensionsPrivateDLL_Revision" @1
+

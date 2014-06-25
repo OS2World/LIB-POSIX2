@@ -1,0 +1,1082 @@
+<html>
+<head>
+<p>
+<h2 align=center>
+<xref table="Commands and Utilities"></xref>
+<B> POSIX.2: Commands and Utilities</B>
+</h2>
+The following synopsis is intended to serve only as a starting point 
+for finding out where command interfaces are defined. Please look up
+the exact specification in the interface definitions themselves. We try to 
+follow the POSIX (R) specifications, if possible. 
+<p>
+<p>
+<dl compact>
+<p>
+<dt><B>m</B><dd>Indicates that the interface is defined as mandatory.
+<p>
+<dt><B>d</B><dd>Indicates that the interface is part of the Development option.
+<p>
+<dt><B>f</B><dd>Indicates that the interface is part of the Fortran option.
+<p>
+<dt><B>l</B><dd>Indicates that the interface is part of the Legacy option.
+<p>
+<dt><B>o</B><dd>Indicates that the interface is optional.
+<p>
+<dt><B>.</B><dd>Indicates that the interface is not specified. 
+<p>
+</dl>
+<p>
+<P><table  bordercolor=#000000 border=1 align=center><tr valign=top><th align=left><B>Interface</B>
+<th align=center><B>UNIX 98
+<th align=center>UNIX95
+<th align=center>POSIX.2
+<th align=center>SVID3
+<th align=center>4.3BSD
+<tr valign=top><td align=left></B><I>admin</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>alias</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>ar</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>o
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>asa</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>o
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>at</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>awk</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>basename</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>batch</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>bc</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>bg</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>c89</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>o
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>cal</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>calendar</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cancel</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>cat</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cc</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cd</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cflow</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>chgrp</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>chmod</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>chown</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cksum</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>cmp</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>col</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>comm</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>command</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>compress</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cp</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cpio</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>crontab</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>csplit</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>ctags</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>cu</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>cut</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>cxref</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>date</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>dd</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>delta</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>df</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>diff</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>dircmp</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>dirname</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>dis</I><B>
+<td align=center>o
+<td align=center>o
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>du</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>echo</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>ed</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>egrep</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>env</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>ex</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>expand</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>expr</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>false</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>fc</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>fg</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>fgrep</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>file</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>find</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>fold</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>fort77</I><B>
+<td align=center>f
+<td align=center>f
+<td align=center>o
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>fuser</I><B>
+<td align=center>m
+<td align=center>.
+<td align=center>
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>gencat</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>get</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>getconf</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>getopts</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>grep</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>hash</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>head</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>iconv</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>id</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>ipcrm</I><B>
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>ipcs</I><B>
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>jobs</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>join</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>kill</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>lex</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>o
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>line</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>link</I><B>
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>lint</I><B>
+<td align=center>ld
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>ln</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>locale</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>localedef</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>logger</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>logname</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>lp</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>lpstat</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>ls</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>m4</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>mail</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>mailx</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>make</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>man</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>mesg</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>mkdir</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>mkfifo</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>more</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>mv</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>newgrp</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>nice</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>nl</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>nm</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>nohup</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>od</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>pack</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>paste</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>patch</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>pathchk</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>pax</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>pcat</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>pg</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>pr</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>printf</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>prs</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>ps</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>pwd</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>read</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>renice</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>rm</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>rmdel</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>rmdir</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>sact</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>sccs</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>
+<td align=center>m
+<tr valign=top><td align=left></B><I>sed</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>sh</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>sleep</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>sort</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>spell</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>split</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>strings</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>strip</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>o
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>stty</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>sum</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>tabs</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>tail</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>talk</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>tar</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>tee</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>test</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>time</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>touch</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>tput</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>tr</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>true</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>tsort</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>tty</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>type</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>ulimit</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>umask</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>unalias</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>uname</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>uncompress</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>unexpand</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<tr valign=top><td align=left></B><I>unget</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>uniq</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>unlink</I><B>
+<td align=center>m
+<td align=center>.
+<td align=center>.
+<td align=center>.
+<td align=center>m
+<tr valign=top><td align=left></B><I>unpack</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>uucp</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>uudecode</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>uuencode</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>uulog</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>uuname</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>uupick</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>uustat</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>uuto</I><B>
+<td align=center>l
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>uux</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>val</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>vi</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>wait</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>wc</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>what</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>.
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>who</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>write</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>xargs</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<tr valign=top><td align=left></B><I>yacc</I><B>
+<td align=center>d
+<td align=center>d
+<td align=center>o
+<td align=center>m
+<td align=center>m
+<tr valign=top><td align=left></B><I>zcat</I><B>
+<td align=center>m
+<td align=center>m
+<td align=center>.
+<td align=center>m
+<td align=center>.
+</table>
+<HR>
+</body></html>

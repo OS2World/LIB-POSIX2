@@ -1,0 +1,850 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+<LINK REV=MADE HREF="mailto:editor@edm2.com">
+<TITLE>EDM/2 - High Resolution Timing under OS/2</TITLE>
+</HEAD>
+
+<BODY TEXT="#000000" LINK="#CC0000" VLINK="#993333" BGCOLOR="#FFFBFB"
+  BACKGROUND="../common/images/bg.gif">
+
+<!-- ====================================================== -->
+<!--                           Map                          -->
+<!-- ====================================================== -->
+<MAP NAME="Linkbar">
+<AREA ALT="Feedback" COORDS="190,1,260,14"
+   HREF="mailto:feedback@edm2.com">
+<AREA ALT="Search" COORDS="280,1,335,14"
+   HREF="../common/search.html">
+<AREA ALT="Top" COORDS="355,1,390,14"
+   HREF="../index.html">
+<AREA ALT="Backward" COORDS="400,1,475,14"
+   HREF="drdialog.html">
+<AREA ALT="Forward" COORDS="490,1,550,14"
+   HREF="wps4.html">
+</MAP>
+
+<TABLE WIDTH="100%">
+<TR>
+<TD VALIGN=TOP WIDTH="15%">
+<IMG BORDER=0 WIDTH=56 HEIGHT=18 ALT="EDM/2"
+  HSPACE=10 SRC="../common/images/edm2sm.gif">
+</TD>
+<TD WIDTH="85%">
+
+<H2>High Resolution Timing under OS/2</H2>
+
+<P>Written by <A HREF="../common/authors/ttabi.html">Timur Tabi</A>
+
+</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="Linkbar" USEMAP="#Linkbar"
+   SRC="../common/images/articlebar.gif">
+
+<P><TABLE WIDTH="100%">
+<TR>
+<TD WIDTH="10%">&nbsp;</TD>
+<TD WIDTH="80%">
+
+<H2>Introduction</H2>
+
+<P>Contrary to popular belief, high resolution timing is quite possible under
+OS/2.  There are services to query the current time with microsecond
+accuracy and to receive events with millisecond accuracy.  This article
+will discuss all of the timing mechanisms available for OS/2.
+
+<H2>Background: Ring 3 and Ring 0 - User vs. Supervisor mode</H2>
+
+<P>OS/2 is a protected operating system.  One of the features of a protected
+OS is that a given program lives in a particular level of protection, or
+privilege.  The microprocessor defines the number of privilege levels and
+the differences between them, and they are ranked from least privileged to
+most privileged.
+
+<P>Early processors, like the 8086, only had one level.  Most modern
+processors allow two levels, typically called supervisor mode and user
+mode. The 80x86 line, however, allows four levels, or "rings" as Intel
+calls them.  Ring 0 is the most privileged and Ring 3 the least.  OS/2
+assigns Ring 0 to supervisor mode and Ring 3 to user mode.  Ring 2 is used
+as a sort of "privileged user mode," but for the purpose of this article,
+it can be treated like Ring 3.  Ring 1 is not used by OS/2.
+
+<P>Therefore, a particular piece of OS/2 code runs in either Ring 0 or
+Ring 3.  For example, most device drivers and the OS/2 kernel run in Ring
+0, and all applications run in Ring 3.  The rules for program execution
+vary greatly between the two rings.
+
+<P>The primary difference between the two rings is in the type of
+instructions that code in a particular ring is allowed to execute.  This
+is why these rings are also called "privilege levels" - code running in
+Ring 0 is more privileged than code in Ring 3, and can therefore execute
+more types of instructions.  For example, Ring 0 code, which usually
+exists in the form of a physical device driver (PDD), can perform I/O
+instructions, can receive hardware interrupts, and can get access to all
+of the system memory.  However, PDD's are more difficult to write and
+debug, so the idea is to avoid them if possible.
+
+<P>The second difference between Ring 0 and Ring 3 is the scheduling
+mechanism.  Scheduling is the process of  transfering control from one
+program to another, and the scheduling mechanism determines how and when
+such a transfer, a.k.a. task switch, occurs.  As you know, OS/2 is a
+pre-emptive multithreaded operating system, but this only applies to Ring
+3.  Ring 0 has a completely different scheduling mechanism.
+
+<H2>Processes: What are they, really?</H2>
+
+<P>The word "program" is very nebulous and abstract term.  We all understand
+what a program is, but it's a difficult concept to describe in words, so I
+am not going to try.  "Process" is sometimes used synonymously with
+"program", but a process is really more specific, in that it describes one
+aspect of a program.  In short, a process refers to the fact that when a
+program runs in OS/2, the memory (RAM) it occupies is protected from other
+processes.  That is, without special provisions, one process cannot affect
+another process, either by accessing its memory, modifying its threads,
+and so on.  A program, in its most vague definition, can actually consist
+of multiple processes, but typically it's a one-to-one ratio.  They key
+point is that whatever program or part of a program is located in a
+process, that code is separate from other processes.
+
+<H2>Threads: Not quite virtual CPUs</H2>
+
+<P>A thread is defined as "a separate and almost simulataneous section of
+executing code."  This definition, unfortunately, doesn't describe what a
+thread really is.  Threads are an abstraction - they simulate having an
+infinite number of microprocessors working in parallel.  In a sense, each
+thread is a "virtual CPU".  The idea is to take a portion of your program
+that does one specific task and create a thread for it.  Then one virtual
+CPU will perform this task while the other virtual CPUs work on other
+tasks.  With an infinite number of CPUs, each thread can run at 100% all
+the time.
+
+<P>Unfortunately, this model does not fit reality.  In practice, most
+computers have only one CPU, and those that have more still have far fewer
+CPUs than threads.  In situations when there are more threads than CPUs
+(i.e. all the time), the threads must share the CPUs.  This sharing is
+performed by having the CPU switch from thread to thread.  After a thread
+is given a chance to run, typically for a few milliseconds, it is "put to
+sleep," and then the next thread, which was previously asleep, is given a
+chance to run also for a few milliseconds.  This duration of time when a
+thread runs is called a timeslice, and the switching from one thread to
+another is called a task switch.
+
+<P>The fact that the CPU must switch from thread to thread alters the
+model of an infinite number of virtual CPUs.  If each thread really did
+have its own CPU, then a thread would most likely enter an idle loop when
+it needs to wait for an event.  If all threads had to share the same CPU,
+then this thread would eat up its entire timeslice doing nothing.  In
+other words, although threads attempt to provide the concept of an
+infinite number of virtual threads, in reality the programmer must design
+his threads knowing how many real CPUs there are.  And the rules change if
+you have one or more than one CPU.
+
+<H4>Only one CPU</H4>
+
+<P>With only one CPU, there is no true parallelism among the threads.  That
+is, you will never have two threads executing at the same time, so it
+makes no sense to divide a computationally intensive task into multiple
+threads, because it will not complete any faster.  In fact, it will take
+longer because you now incur the overhead of task switches.  The purpose
+of threads now becomes to make more efficient use of the CPU.  The less
+CPU your application needs, the faster it runs and the more CPU remains
+for other applications.  For this case, the use of threads falls into two
+categories:
+
+<OL>
+
+<LI>Background tasks.  Any time-consuming operation (e.g. saving a file)
+can be performed by a separate thread, thereby freeing the primary thread
+(e.g. the one that processes user input) and allowing it to be more
+responsive.
+
+<LI>Handling a mix of I/O and computation.  Some programs need to read
+data from one or more inputs, process it, and then send to one or more
+outputs.  By putting each input, output, and compute task in their own
+threads, you can use OS/2's built-in scheduling mechanism to insure that
+when data is available, it is processed as soon as possible.
+
+</OL>
+
+Determining how to multithread your application is beyond the scope of
+this article, mainly because there are few hard rules that can be used for
+every application.  The list of  references includes books and articles
+that talk about how best to implement multithreading your software.
+
+<H4>More than one CPU</H4>
+
+<P>It's difficult to find software that could take advantage of multiple
+CPUs, let alone software that actually is optimized for multiple CPUs.  In
+most cases, if your app is heavily multithreaded, it will run just as
+well, and maybe better, on multiple CPUs.  In most cases, however, the
+other CPUs will be used for any other programs or for the operating system
+itself.  Although your app may not run better, the system as a whole runs
+better.  For example, DOS sessions can be configured to use two threads,
+and it has been reported that on Warp Server SMP with two CPUs, Windows
+MIDI applications run flawlessly.
+
+<P>A computer which has more than one CPU, where all CPUs are identical
+and operate in parallel, is called a Symmetric Multi Processing (SMP)
+machine.  Techniques for optimizing your code for SMP are beyond the scope
+of this article.  For more information, check out EDM/2 issues <A
+HREF="../0507/index.html">5-7</A> and <A
+HREF="../0509/index.html">5-9</A>.
+
+<H2>Thread states and classes</H2>
+
+<P>A typical system has dozens, maybe hundreds of threads at any given time.
+Since there is only one CPU for all these threads, something must keep
+track of threads so the CPU knows where to go during a task switch.  This
+something is called the task scheduler, or just scheduler.  In order to
+determine which threads are next in line, the scheduler applies two
+attributes to each thread: state and priority.
+
+<P>Threads have three states: running, ready, and blocked.  A running
+thread is one that is currently running, so obviously the the number of
+running threads in the system is less than or equal to the number of CPUs.
+A ready thread is one that is waiting to run, i.e. the ready state occurs
+right before the running state.  When a task switch occurs, the scheduler
+looks only at the list of ready threads to determine which one is next.  A
+blocked thread is one that has been put to sleep, either because it or
+some other thread forced it to sleep, or because it is waiting for an I/O
+operation to complete.  Once the thread is "woken up", it is moved to the
+ready state.
+
+<P>A thread has any one of four priority classes: idle (I), regular (R),
+foreground server or fixed high (S), and time-critical (TC), and within
+each class there is a level or delta, which ranges from 0 to 31.  For
+example, a time-critical thread with a +5 delta would be written as TC+5.
+Deltas are used to specify a relative difference between two threads in a
+particular class.  For instance, if you have two time-critical threads A
+and B, and if you want to ensure that A always runs first whenever both A
+and B are in the ready state, you would make A's priority TC+1 and B's
+priority TC+0.
+
+<P>The delta is also used by OS/2 to dynamically modify a thread's
+priority.  A thread is never boosted to the next class, and only threads
+in the regular class are modified by the system.  Reasons why a thread
+would be boosted include:
+
+<UL>
+
+<LI>The thread belongs to the foreground process
+
+<LI>The thread has been in the ready state longer than other threads
+
+<LI>The thread has been blocked on an I/O operation which was just
+    completed
+
+</UL>
+
+The default priority for a thread is R+0, and it can be adjusted to other
+priorities via the DosSetPriority API. The idle class is used for a thread
+that should only run when there is nothing else running in the system.
+This priority is usually reserved for non-essential threads, such as one
+that would be used for a utility that monitors the swapper file.  A
+foreground server thread is exactly like a normal thread, except that its
+priority is not lowered when it is placed in the background.  Thus, a
+foreground server thread has the same priority profile regardless of
+whether the process is in the foreground or background.  This behavior is
+necessary for certain network server applications, hence the name.
+
+<P>The idle and foreground server priority classes are not important in
+the context of this article.  The time-critical class, however, is very
+important.  It behaves radically different from the other classes, and
+these differences are the basis for some of the techniques discussed in
+this article.  Time-critical threads are covered in detail below.
+
+<P>A process has at least one thread.  Any process or program which has
+more than one thread is said to be multithreaded.
+
+<H2>Thread Scheduling in Ring 3</H2>
+
+<P>The OS/2 scheduler, which controls the thread switching, has three
+characteristics:
+
+<OL>
+
+<LI>When it comes time to transfer control to another thread, the
+scheduler uses a priority-based mechanism to decide what that next thread
+is.  Each thread has the option of changing its priority, and this affects
+the ordering of threads.  Threads of higher priority run before threads of
+lower priority.  All threads of the same priority are run in round-robin
+fashion; that is, in sequence.  Only threads that are in the "ready" state
+are considered, as these are the only ones that are waiting to run.
+
+<LI>In order to provide a robust multithreading environment, the scheduler
+can pre-empt (yank control from) a currently running thread if its
+time-slice has expired.  A time-slice is usually 32 milliseconds.  Not
+only does this prevent a thread from blocking other threads, but it also
+allows the developer to create a CPU-intensive thread without worrying
+about degrading overall system performance.
+
+<LI>Task switches can only occur when the scheduler is activated, and the
+scheduler is only activated in response to an external event.  Such events
+include hardware timer interrupts, interrupts from other devices such as
+disk drives or serial ports, and calls to certain OS/2 API's.
+
+</OL>
+
+The biggest misconception of OS/2 scheduling is that function #2 is the
+most important factor.  When people learn about OS/2's 32ms time slices,
+they believe that all threads cycle in 32ms slices, and that a thread will
+usually have to wait at least that long before it gets an event
+notification.  This is not true at all.  Function #1 is the most
+important, because if you can get the scheduler to run your thread
+whenever you need it to, you will have pseudo real-time performance.  I
+say "pseudo" because there is significant overhead in switching from the
+current thread to your thread, possibly as long as several milliseconds,
+but at least it is nowhere near as bad as Windows 95.
+
+<P>Consider three threads, T1, T2, and T3.  T1's priority is R+3, and both
+T2 and T3 are R+0.  When the scheduler is activated, it must look at all
+of the threads in the ready state and decide which one is to be run.
+Let's consider all possible combinations of T1, T2, and T3 being in the
+ready state, and there are no other threads in the system.  Let's also
+ignore the case where none of them are in the "ready" state.
+
+<PRE><SMALL>
+     T1 ready?  T2 ready?  T3 ready?  Next to run?
+        N          N          Y           T3
+        N          Y          N           T2
+        N          Y          Y           T2 or T3
+        Y          N          N           T1
+        Y          N          Y           T1
+        Y          Y          N           T1
+        Y          Y          Y           T1
+</SMALL></PRE>
+
+As you can see, since T1 is of higher priority, it always runs if it's
+ready.  And as for the case when T2 and T3 (but not T1) are ready, T2 will
+run if T3 was the last R+0 thread to run, and T3 will run if T2 was the
+last R+0 thread to run.  In other words, all threads of the same priority
+are group together, in sequential order, and after a thread runs, it is
+moved to the end of the sequence.
+
+<P>Methods for synchronizing threads (e.g. by using semaphores) and
+communicating between threads (e.g. via pipes or shared memory) are beyond
+the scope of this article.
+
+<H2>Regular threads - 32ms time slices</H2>
+
+<P>As you probably know, normal OS/2 threads run in 32ms time slices.  But
+what does this mean, exactly?  For starters, it means that a normal thread
+will run for no more than 32ms before it gets pre-empted.  However, few
+threads actually run this long.  After all, a 90MHz Pentium can easily
+execute two million instructions in 32 milliseconds.  A thread will
+usually block for some other reason first, such as calling an OS/2 API.
+
+<P>Regular threads, as their name implies, are not very interesting.
+Because of they don't have any real-time capability, few of the advanced
+timing functions work correctly.
+
+<H2>Time critical threads - 8ms time slices</H2>
+
+<P>Time critical threads are more than just threads that run at a higher
+priority.  Their entire scheduling model is different in two ways:
+
+<OL>
+
+<LI>The timeslices are only 8ms long.  This means that if there are two TC
+threads with the same priority delta and doing nothing but computations,
+the CPU will switch back-and-forth between them every 8ms.
+
+<LI>If a TC thread moves into the ready state, and its priority delta is
+higher than any other TC thread that is currently running, that new TC
+thread will immediately pre-empt the current TC thread.  This means that
+the only thing which can pre-empt a TC+31 thread is a hardware interrupt.
+
+</OL>
+
+The system clock driver, CLOCK01.SYS, is responsible for programming the
+timer hardware to generate the interrupts necessary to signal the end of a
+timeslice.  With OS/2 Warp 3 GA (no fixpacks) and earlier, the clock
+driver would dynamically switch between 32Hz (31.25ms) and 128Hz (8.025ms)
+whenever necessary.  On some systems with flaky timer hardware this
+switching caused inaccuracies in the clock, so now the clock stays at
+128Hz, even when there are no TC threads.  Unfortunately, there is no way
+to access this new higher frequency clock.  None of the APIs has changed.
+
+<H2>OS/2 API Services for Ring 3 Timing</H2>
+
+<DL>
+
+<DT>DosSleep
+
+<DD>
+<PRE><SMALL>
+  #define INCL_DOSPROCESS
+  #include &lt;os2.h&gt;
+
+  ULONG     msec;  /*  The time, in milliseconds, for which the calling
+                       thread's execution will be suspended. */
+  APIRET    ulrc;  /*  Return Code. */
+
+  ulrc = DosSleep(msec);
+</SMALL></PRE>
+
+This API puts the current thread to sleep for a specified amount of time.
+In other words, it moves itself from the running state to the blocked
+state.  The thread remains in the blocked state for the duration specified
+in the DosSleep call, and then it moves to the ready state.  The time
+interval is specified in milliseconds, although the granularity of
+DosSleep is the same as the length of a timeslice - 32ms.
+
+<P>There is one special case to this API.  DosSleep(0) will cause the
+thread to yield the remainder of its timeslice to another thread in the
+ready state with a higher priority.  Obviously calling DosSleep(0) in a TC
+thread has no value because higher-priority TC threads already pre-empt
+lower-priority ones as soon as they move into the ready state.
+
+<P><DT>DosAsynchTimer, DosStartTimer, and DosStopTimer
+
+<DD>
+<PRE><SMALL>
+  #define INCL_DOSDATETIME
+  #include &lt;os2.h&gt;
+
+  ULONG  msec;    /*  The time, in milliseconds, before the event
+                      semaphore specified by hsem is posted. */
+  HSEM   hsem;    /*  The handle of an event semaphore that will
+                      be posted when the time specified by msec
+                      has elapsed. */
+  HTIMER htimer;  /*  The timer handle. */
+  APIRET ulrc;    /*  Return Code. */
+
+  ulrc = DosAsyncTimer(msec, hsem, &amp;htimer);
+</SMALL></PRE>
+
+ and
+
+<PRE><SMALL>
+  #define INCL_DOSDATETIME
+  #include &lt;os2.h&gt;
+
+  ULONG  msec;    /*  The time, in milliseconds, that will elapse
+                      between postings of the event semaphore
+                      specified by hsem. */
+  HSEM   hsem;    /*  The handle of the event semaphore that is
+                      posted each time msec elapses. */
+  HTIMER htimer;  /*  The timer handle. */
+  APIRET ulrc;    /*  Return Code. */
+
+  ulrc = DosStartTimer(msec, hsem, &amp;htimer);
+</SMALL></PRE>
+
+and
+
+<PRE><SMALL>
+  #define INCL_DOSDATETIME
+  #include &lt;os2.h&gt;
+
+  HTIMER    htimer;  /*  The handle of the timer to stop. */
+  APIRET    ulrc;    /*  Return Code. */
+
+  ulrc = DosStopTimer(htimer);
+</SMALL></PRE>
+
+These three APIs are used to create an asynchronous timer.  The parameters
+are a time interval and a semaphore handle.  The call returns immediately,
+and after the time interval has passed, the system will posts the
+semaphore.  The difference between the two APIs is that DosAsynchTimer is
+a one-shot timer whereas DosStartTime is periodic.  DosStopTimer can be
+used to stop both types of timers.
+
+<P><DT>WinStartTimer and WinStopTimer
+
+<DD>
+<PRE><SMALL>
+  #define INCL_WINTIMER /* Or use INCL_WIN, INCL_PM, */
+  #include &lt;os2.h&gt;
+
+  HAB      hab;             /*  Anchor-block handle. */
+  HWND     hwnd;            /*  Window handle that is part of the
+                                timer identification. */
+  ULONG    ulTimer;         /*  Timer identifier. */
+  ULONG    ulTimeout;       /*  Delay time in milliseconds. */
+  ULONG    ulTimerStarted;  /*  Timer identity. */
+
+  ulTimerStarted = WinStartTimer(hab, hwnd, ulTimer, ulTimeout);
+</SMALL></PRE>
+
+and
+
+<PRE><SMALL>
+  #define INCL_WINTIMER /* Or use INCL_WIN, INCL_PM, */
+  #include &lt;os2.h&gt;
+
+  HAB      hab;      /*  Anchor-block handle. */
+  HWND     hwnd;     /*  Window handle. */
+  ULONG    ulTimer;  /*  Timer identifier. */
+  BOOL     rc;       /*  Success indicator. */
+
+  rc = WinStopTimer(hab, hwnd, ulTimer);
+</SMALL></PRE>
+
+WinStartTimer is the Presentation Manager (PM) version of DosStartTimer.
+Instead of posting a semaphore, a WM_TIMER message is sent to the a
+message queue.  Since it's possible to have a time-critical thread blocked
+on the semaphore for DosStartTimer, and since WM_TIMER is just a PM
+message, chances are DosStartTimer will be more accurate.  As expected,
+WinStopTimer can be used to cancel the timer.
+
+<P><DT>DosTmrQueryFreq and DosTmrQueryTime
+
+<DD>
+<PRE><SMALL>
+  #define INCL_DOSPROFILE
+  #include &lt;os2.h&gt;
+
+  PULONG pulTmrFreq;  /*  A pointer to the frequency of the counter. */
+  APIRET ulrc;        /*  Return Code. */
+
+  ulrc = DosTmrQueryFreq(pulTmrFreq);
+</SMALL></PRE>
+
+and
+
+<PRE><SMALL>
+  #define INCL_DOSPROFILE
+  #include &lt;os2.h&gt;
+
+  QWORD  qwTmrTime; /*  The current count. */
+  APIRET ulrc;      /*  Return Code. */
+
+  ulrc = DosTmrQueryTime(PQWORD pqwTmrTime)
+</SMALL></PRE>
+
+These two undocumented functions use the 8253/4 timer chip to obtain a
+timestamp.  DosTmrQueryTime returns the current count, and DosTmrQueryFreq
+returns the frequency at which the counter increments.  This frequency is
+about 1.1MHz, which gives you a timer that's accurate to the microsecond -
+the most accurate of all timing functions in OS/2.
+
+<P><DT>DosGetDateTime and DosSetDateTime
+
+<DD>
+<PRE><SMALL>
+  #define INCL_DOSDATETIME
+  #include &lt;os2.h&gt;
+
+  DATETIME  dt;    /*  DateTime data structure. */
+  APIRET    ulrc;  /*  Return Code. */
+
+  ulrc = DosGetDateTime(&amp;dt);
+</SMALL></PRE>
+
+and
+
+<PRE><SMALL>
+  #define INCL_DOSDATETIME
+  #include &lt;os2.h&gt;
+
+  DATETIME  dt;    /*  DateTime data structure. */
+  APIRET    ulrc;  /*  Return Code. */
+
+  ulrc = DosSetDateTime(&amp;dt);
+</SMALL></PRE>
+
+DosGetDateTime obtains the current date, including day of the week, and
+time, including the current timezone.  The returned time supports values
+to the 100th of a second; however, it is not really that accurate.
+DosSetDateTime, as you can imagine, sets the current date and time in the
+CMOS.  Since every field of the DATETIME structure is used to update the
+CMOS, it is easiest to first use DosGetDateTime to fill the DATETIME
+structure, change whichever values you want to change, and then call
+DosSetDateTime.
+
+<P><DT>DosGetInfoSeg
+
+<DD>Like most functions that have the word "Seg" in them, this is a 16-bit
+API.  In theory, it should be usable from 32-bit code, but many
+programmers have problems getting the old 16-bit API's to work, especially
+if DLL's are involved.  If your toolkit does not have this function
+listed, you can try the Build Environment on the DDK (<A
+HREF="http://service.boulder.ibm.com/ddk/">
+http://service.boulder.ibm.com/ddk/</A>).
+
+<P>The function returns two selectors, from which you can generate two
+16-bit far pointers.  The first points to a InfoSegGDT structure, and the
+second points to a InfoSegLDT structure.  Both structures are defined in
+infoseg.h.  InfoSegGDT is very much like the structure returned from the
+DevHelp_GetDOSVar, subfunction DHGETDOSV_SYSINFOSEG call for device
+drivers (see below).  The structure contains various time and date
+information, including a running millisecond counter.
+
+<P><DT>RDTSC Assembly Language Instruction (Pentium and higher only)
+
+<DD>
+<PRE><SMALL>
+  0F 31  RDTSC    ; Result -> EDX:EAX == 64-bit current cycle count
+</SMALL></PRE>
+
+The RDTSC assembly-language instruction, available only on the Pentium and
+higher, is not an OS/2-specific service, but it is included here for
+completeness.  After executing this instruction, the EDX:EAX pair contains
+a 64-bit count of the total machine cycles since the processor was reset.
+This instruction can be executed in Ring 3 or in Ring 0; however, it
+cannot be used to accurately time a sequence of code in Ring 3 because
+there is no way to suspend or even detect when a task switch has occured,
+so the result is not dependable.
+
+<P><DT>TIMER0, The high resolution timer driver - the last resort
+
+<DD>The TIMER0.SYS device driver that comes with Warp 4 provides 1
+millisecond timing services for applications (Ring 3) and device drivers
+(Ring 0).  TIMER0, unfortunately, has some serious drawbacks, and
+therefore should be considered a last resort.
+
+<P>This warning cannot be stressed enough.  TIMER0, when active, will
+disable almost every DOS application, including Win-OS/2 itself, and
+therefore every Windows application.  TIMER0 generates 1,000 interrupts
+per second, and therefore can easily overload the system, especially on
+slower machines.  TIMER0 also uses the same hardware as most performance
+analyzers, so these tools cannot be used.  Applications and drivers which
+use TIMER0 services are called clients, and TIMER0 allows far more
+simultaneous clients than it can actually handle.
+
+<P>With all of these limitations, TIMER0 should only be used if there is
+no other way to perform the required task.  In addition, if there is an
+alternative method that can provide acceptable timing accuracy in at least
+some cases, that method must be available as an option.
+
+<P>TIMER0 can be accessed via an IOCtl interface, which provides the
+ability to:
+
+<OL>
+
+<LI>Obtain a pointer to the clock counter.  The pointer returned is a
+16:16 pointer, which should be converted to a 0:32 pointer for use with
+32-bit applications. This pointer allows you to obtain the current
+timestamp without the overhead of an API call.
+
+<LI>Query and set the resolution. Currently, the resolution is always 1
+millisecond.  Attempts to set it to another value will be ignored, and
+querying the driver will always return 1 millisecond. You should set the
+resolution anyway-in the future, the driver may actually use a lower
+resolution to conserve resources.
+
+<LI>Block until a certain time has elapsed.  This function must be called
+from a time-critical thread, otherwise it will be no more more accurate
+than DosSleep.  In addition, the overhead of calling this function can add
+as much as 2ms.
+
+</OL>
+</DL>
+
+For more information, see the multimedia device driver reference in the
+DDK.
+
+<H2>Scheduling in Ring 0</H2>
+
+<P>Whereas the scheduler in Ring 3 is pre-emptive, the Ring 0 scheduler is
+co-operative.  Actually, the Ring 0 and Ring 3 schedulers are the same
+scheduler, the difference is that when a thread is running in Ring 0, the
+only thing that can pre-empt it is a hardware interrupt.  And when the
+interrupt handler is finished, control returns back to the Ring 0 thread.
+There are no timeslices in Ring 0.
+
+<P>Threads in Ring 0 also have priorities and states, although thread
+priorities don't play as significant a role as they do in Ring 3, because
+usually there are far fewer threads in Ring 0 and they run infrequently
+and for only a short time.  However, Ring 0 threads do have an addition
+attiribute: the context, or mode.  The thread context limits what API's
+are available to the thread.  The context is determined by how the thread
+was created, and therefore a thread cannot change its context.  There are
+three contexts:
+
+<OL>
+
+<LI>Init Mode: An driver runs in init mode when the device driver is first
+loaded and OS/2 calls its initialization function.  One feature of init
+mode is that the initialization function actually runs in Ring 3, so the
+driver can make some DosXxxx calls, such as opening a file or calling
+another driver.  It can also perform I/O operations and call some DevHelp
+(device driver API) services, therefore it is not like normal Ring 3
+threads.
+
+<LI>Interrupt Mode.  Interrupt mode is reserved exclusively for the
+driver's interrupt handler.  This mode is the most restrictive, in that
+only a small subset of DevHelp functions can be called.
+
+<LI>Kernel Mode. Kernel mode is the most common context in which a driver
+runs.  Examples include when a driver gets called via  DosXxx function,
+like DosOpen or DosDevIOCtl, or when a driver is called via a context
+hook.
+
+</OL>
+
+<H2>Device Driver Interrupt Threads</H2>
+
+<P>An interrupt thread is a device driver thread that runs in interrupt mode.
+In other words, it is the thread that runs an interrupt handler.
+Interrupt threads are the highest-priority threads in OS/2.
+
+<P>Interrupt handlers are functions that handle hardware interrupts -
+signals that come from devices, such as a hard drive or a modem, which
+indicate that the device needs attention from software.  Typically this
+means that the device has data that it needs to send to a program, but it
+could also mean that the device is ready to accept data or that it has
+important status information.
+
+<P>The PC architecture supports 16 different hardware interrupt levels, or
+IRQs, and these levels constitute different priorities.  This means that
+when an interrupt at a certain level is being serviced (i.e. the interrupt
+handler for that IRQ is currently running), it can be pre-empted by an
+interrupt of a higher priority.  Interrupts at a lower priority are
+automatically delayed until the current interrupt handler exits.  However,
+it is possible for an interrupt handler to disable all interrups with the
+cli assembly instruction, but SMP-aware drivers should use
+DevHelp_AcquireSpinLock API instead.  In fact, a device driver can disable
+interrupts via cli or DevHelp_AcquireSpinLock from any context, not just
+from an interrupt handler.
+
+<H2>Device Driver Context Hooks</H2>
+
+<P>Context hooks allow an interrupt handler to be processed in kernel mode.
+Before the interrupt handler is called, a context hook is allocated via
+DevHelp_AllocateCtxHook.  A context hook is basically a device driver
+thread that runs in kernel mode.  When the interrupt handler is called, it
+performs the bare minimum processing, such as fetching the data from the
+device and placing it into a queue, and then it arms the context hook via
+DevHelp_ArmCtxHook.  Immediately after the interrupt handler exits,
+provided there isn't another interrupt pending, the context hook runs.
+
+<P>By using context hooks, there are three advantages.  First, you can
+call more DevHelp services than you can in an interrupt handler.  Second,
+moving time-consuming code from the interrupt handler to a context hook is
+more system-friendly, since interrupts are not disabled.  Third, since the
+interrupt handler is much shorter, it might be possible to disable
+interrupts throughout the entire handler, removing the need for
+nested-interrupt logic in the code, thereby simplifying the programming.
+
+<H2>DevHelp_Yield and DevHelp_TCYield</H2>
+
+<PRE><SMALL>
+  USHORT usrc;     /*  Return Code. */
+
+  usrc = DevHelp_Yield();
+</SMALL></PRE>
+
+DevHelp_Yield will yield the CPU to any higher priority thread.  Every 3
+milliseconds (as recommended by the online documentation), a driver should
+call DevHelp_GetDosVar subfunction DHGETDOSV_YIELDFLAG to see if there is
+a kernel thread in the ready state.  If so, DevHelp_Yield should be
+called.  DevHelp_TCYield is a special case of DevHelp_Yield, in that it
+will only yield the CPU to a time-critical thread.  DevHelp_Yield is a
+superset of DevHelp_TCYield, so there is no need to call both.
+
+<H2>DevHelp_SetTimer and DevHelp_TickCount - 32ms callbacks</H2>
+
+<PRE><SMALL>
+  USHORT     usrc;                /*  Return Code. */
+  void NEAR  TimerHandler(void);  /* Callback function */
+
+  usrc = DevHelp_SetTimer((NPFN) TimerHandler )
+</SMALL></PRE>
+
+and
+
+<PRE><SMALL>
+  USHORT usrc;                    /*  Return Code. */
+  USHORT TickCount;               /* Number of ticks per call */
+  void NEAR TimerHandler(void);   /* Callback function */
+
+  usrc = DevHelp_TickCount((NPFN) TimerHandler, TickCount );
+</SMALL></PRE>
+
+DevHelp_SetTimer is used to provide callbacks to the driver.  A pointer to
+a function is passed, and every timer tick (32ms) thereafter, the kernel
+will call that function on an interrupt thread.  DevHelp_TickCount does
+the same thing, but you have to option of specifying every n timer ticks.
+
+<H2>DevHelp_GetDOSVar, subfunction DHGETDOSV_SYSINFOSEG</H2>
+
+<PRE><SMALL>
+  USHORT usrc;                    /* Return Code. */
+  USHORT TickCount;               /* Number of ticks per call */
+  void NEAR TimerHandler(void);   /* Callback function */
+  PGINFOSEG pGlobalInfoSeg;       /* Pointer to Global Info Seg
+
+  usrc = DevHelp_GetDOSVar(DHGETDOSV_SYSINFOSEG, 0, &pGlobalInfoSeg);
+</SMALL></PRE>
+
+This function returns a pointer to a GINFOSEG structure (see bsedos16.h)
+which contains, among other things, several fields of time and date
+information, much like the DosGetDateTime API.
+
+<H2>TIMER0, The high resolution timer driver - the last resort</H2>
+
+<P>Again, it must be stressed that use of TIMER0 should be considered as a
+last resort.
+
+<P>Besides the IOCtl interface, TIMER0 also includes a device driver
+interface via Inter-Device Communication, or IDC.  Two services are
+provided:
+
+<OL>
+
+<LI>Callback every n milliseconds, where n is an integer >= 1. This first
+option allows your device driver to register itself with the
+high-resolution timer. The device driver provides a 16:16 address of a
+function that the high-resolution timer calls every n milliseconds.
+Registration (and deregistration) cannot occur during interrupt time.   If
+a device driver re-registers itself-by calling the registration function
+with the same 16:16 pointer-the high-resolution timer simply changes the
+count. This can occur at interrupt time.
+
+<LI>Query the current time.  This second option is used to obtain a 16:16
+pointer to the current count variable. This variable can then be read by
+the device driver to obtain the current time. Note that this variable is
+only updated if the high-resolution timer is active-which is only true if
+at least one driver or application has registered itself with the
+high-resolution timer. Also note that this variable can be synchronized to
+another timeclock.
+
+</OL>
+
+<H2>Conclusion</H2>
+
+<P>Given the large selection of timing services and the improved performance
+over Windows 95 and Windows NT, OS/2 Warp 4 makes a great platform for
+timing-sensitive applications, including those that need near real-time
+responsiveness.
+
+<H2>References</H2>
+
+<P>Deitel, H.M., and M.S. Kogan. <I>The Design of OS/2</I>. Reading:
+Addison-Wesley Publishing, 1992.
+
+<P>Panov, Kathleen; Larry Salomon, Jr.; and Arthur Panov. <I>The Art Of
+OS/2 Warp Programming</I>. New York: John Wiley and Sons, 1995.
+
+<P>Stock, Mark. <I>OS/2 Warp Control Program API</I>. New York: John
+Wiley and Sons, 1995.
+
+<P>Mastrianni, Steven J. <I>Writing OS/2 2.0 Device Drivers in C</I>. New
+York: Van Nostrand Reinhold, 1992.
+
+<P>Reich, David E. <I>Designing High-Powered OS/2 Warp Applications</I>.
+New York: John Wiley and Sons, 1995.
+
+<P>[Note: many of these books are on sale in our <A
+HREF="../bookstore/index.html">bookstore</A>.]
+
+</TD>
+<TD WIDTH="10%">&nbsp;</TD>
+</TR>
+</TABLE>
+
+<!-- ====================================================== -->
+<!--                         Linkbar                        -->
+<!-- ====================================================== -->
+<P><IMG BORDER=0 WIDTH=560 HEIGHT=14 ALT="Linkbar" USEMAP="#Linkbar"
+   SRC="../common/images/articlebar.gif">
+
+</BODY>
+</HTML>

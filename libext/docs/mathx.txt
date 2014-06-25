@@ -1,0 +1,97 @@
+	[$Id: mathx.txt,v 1.4 2000/08/06 20:09:35 amai Exp $]
+
+**   Additional BSD U*ix-style math functions and macros. **
+ *
+ *	Extensions to ISO C Standard: 4.5 MATHEMATICS	<math.h>
+
+SYNOPSIS:
+    double expm1(double x);
+    double log1p(double x);
+    long double log1pl(long double x);
+    double asinh(double x);
+    long double asinhl(long double x);
+    double acosh(double x);
+    long double acoshl(long double x);
+    double atanh(double x);
+    long double atanhl(long double x);
+    double coshm1(double x);
+    double acosh1p(double x);
+    double logb(double x);
+    double drem(double x, double x);
+    void sincos(double x, double *sin_x, double *cos_x);
+    double pow2(double x);
+    double hypot(double x, double y);
+
+  MACROS:
+    _sgn(double x)  
+    _sgnl(long double x) 
+   _sgn1(double x)  
+   _sgn1l(long double x) 
+
+  CONSTANTS:
+    M_El             2.71828182845904523536L	/* e */
+    M_LOG2El         1.44269504088896340736L	/* log 2e */
+    M_LOG10El        0.434294481903251827651L	/* log 10e */
+    M_LN2l           0.693147180559945309422L	/* log e2 */
+    M_LN10l          2.302585092994045684018L	/* log e10 */
+
+    M_PIl            3.14159265358979323846L
+    M_PI_2l          1.57079632679489661923L	/* pi/2 */
+    M_PI_4l          0.785398163397448309616L	/* pi/4 */
+    M_1_PIl          0.318309886183790671538L	/* 1/pi */
+    M_2_PIl          0.636619772367581343076L	/* 2/pi */
+    M_2_SQRTPIl      1.12837916709551257390L	/* 2/sqrt(pi) */
+    M_SQRT2l         1.41421356237309504880L	/* sqrt(2) */
+    M_SQRT1_2l       0.707106781186547524401L	/* 1/sqrt(2) */
+
+   /* Some Useful Constants From Cephes Math Library */
+    MAXNUML   LDBL_MAX
+    MACHEPL   LDBL_EPSILON    
+    MAXLOGL   1.1356523406294143949700E+04L  /* logl(MAXNUML) */
+    MINLOGL (-1.1355137111933024058900E+04L) /* logl(LDBL_MIN) */
+    LOGE2     6.9314718055994530941723E-1
+    LOGE2L    6.9314718055994530941723E-1L
+    LOG2EL    1.4426950408889634073599E0L
+    PIL       3.1415926535897932384626L
+    PIO2L     1.5707963267948966192313L
+    PIO4L     7.8539816339744830961566E-1L
+    NEGZEROL  (-0.0L)
+    NANL      (long double)NAN
+    INFINITYL (long double)INFINITY
+
+
+DESCRIPTION:
+  See the manual pages in chapter man3.
+
+
+IMPLEMENTATION:
+  Some functions are implemnted as inline functions. Use the 
+  switch -fno-inline, if you do not want them inline.
+
+
+COPYRIGHT:
+   Parts: Cephes Math Library Release 2.3:  March, 1995
+Copyright 1984, 1995 by Stephen L. Moshier
+   Documentation is included on the distribution media as
+   Unix-style manual pages that describe the functions and their
+   invocation.  The primary documentation for the library functions
+   is the book by Moshier, Methods and Programs for Mathematical Functions, 
+   Prentice-Hall, 1989.
+
+   Parts: Copyright (C) 1991, 92, 93, 95, 96, 97, 98 Free Software 
+   Foundation, Inc. This file is part of the GNU C Library.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public License as
+   published by the Free Software Foundation; either version 2 of the
+   License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public
+   License along with the GNU C Library; see the file COPYING.LIB.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 
+   330, Boston, MA 02111-1307, USA.

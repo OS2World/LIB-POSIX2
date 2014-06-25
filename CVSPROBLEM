@@ -1,0 +1,36 @@
+$Id: CVSPROBLEM,v 1.6 2000/07/29 09:14:46 amai Exp $
+
+There appears to be a bad incompatibility between Unix and OS/2 port of
+CVS (current version ftp://hobbes.nmsu.edu/pub/os2/dev/util/cvs1107.zip):
+
+Files with CR LF in it, checked in from a Unix host will become CR CR LF
+when checked out with the above OS/2-cvs.
+
+If you do so, then you have to fix the whole source tree with the provided
+fixtxt utility in this directory.
+
+I assume you have emx/gcc and gnu find installed for the following:
+
+1. compile the fixcrcr utility:
+	cd "this_toplevel_directory"
+	gcc -Zexe -o fixcrcr.exe fixcrcr.c
+
+2. fix the tree (the \OS2\FIND.EXE will NOT work!!!):
+	\emx\bin\find . -type f -exec fixcrcr {} ;
+
+3. remove the garbage fixcrcr.exe.tmp file in the toplevel directory.
+
+WARNING: The find command will apply fixcrcr to ALL files in the tree, and
+will thus also destroy existing binaries. If you have updated the tree
+from the repository, you have to "make clean" before recompiling, otherwise
+you will produce defective files.
+
+When submitting patches: First fix defective ASCII with fixtxt. 
+
+In toplevel (CVSROOT) directory:
+
+1) Run make distclean! 
+
+2) cvs -z4 update
+
+3) cvs -z4 diff -udw >diff.out

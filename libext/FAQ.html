@@ -1,0 +1,516 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!-- 
+  $Header: /cvsroot/posix2/posix2/libext/FAQ.html,v 1.4 2000/11/25 16:33:35 arnd Exp $
+-->
+<HTML>
+<HEAD>
+<TITLE>FAQ</TITLE>
+</HEAD>
+<BODY>
+	[$Header: /cvsroot/posix2/posix2/libext/FAQ.html,v 1.4 2000/11/25 16:33:35 arnd Exp $]
+
+
+<pre>
+				"Steve Jobs said two years ago that X is 
+				brain-damaged and it will be gone in
+				two years.  He was half right."
+							 (Dennis Ritchie)
+</pre>
+
+
+
+<h1> 	Frequently Asked Questions (FAQ) to the P/2 - libExt project </h1>
+
+Please read first our <a href="file:///../README.1st">../README.1st</a>,
+our <a href="file:///./README.1st">README.1st</a>
+and our <a href="file:///./README">README</a> .
+
+<ul>
+Even more info than in this FAQ can be found on
+<a href="http://posix2.sourceforge.net">http://posix2.sourceforge.net</a>
+
+<ul>
+<hr><h2> General questions </h2>
+
+<dt><cite><LI>
+We already have EMX. What is the purpose and origin of P/2?
+<dd></cite>
+Well, it started when some people found out that for porting X11 apps 
+EMX was not enough ... We are currently lacking a large number of interfaces 
+(APIs) with semantics that are more complete and closer to POSIX than EMX.
+<br>
+
+<dt><cite><LI>
+How exactly does libExt help me in porting un*x apps?
+Can I now easily build my favourite un*x app 'foo' without
+any modifications to the source?
+<dd></cite>
+Well, yes and no ...
+Actually the situation is still more or less the same as it used to be:
+you have to spend some time on the port. The crucial topics like
+un*x filesystem, etc. haven't been addressed here yet. We offer
+some more frequently used APIs than EMX does. However a few of them
+are known to be untested, incomplete or even broken.
+
+
+
+<dt><cite><LI>
+ I am constantly seeing stuff like this, when I try to checkout the source:
+</cite><pre>
+
+  # cvs.exe -d:pserver:anonymous@cvs.posix2.sourceforge.net:/cvsroot/posix2 login
+  # cvs.exe [login aborted]: could not open //.cvspass: No such file or directory
+
+</pre>
+
+<dd>
+ Looks like you don't have a HOME environment variable set. That's where
+ cvs stores .cvspass so that you only have to enter the password for each
+ cvs server you use once.
+ CVSROOT is set properly and cvs will pull everything when you type
+</cite><pre>
+
+  # cvs -q -z6 co -d:pserver:anonymous@cvs.posix2.sourceforge.net:/cvsroot/posix2
+
+</pre>
+Later updates are very easy then. Just cd to posix2/ and hit:
+</cite><pre>
+
+  # cvs -q -z6 up -dP
+
+</pre>
+<dt><cite><LI> I am keeping an eye on 2 libs and one app that I will surely port and that
+will surely use libEXt. 
+
+<dd></cite>
+Great! Please link statically for now, until we finally announce the 'freeze'
+of existing interfaces and entry points; later versions are likely not to be
+binary compatible. Nevertheless, 'make dll' should produce a stripped dll. 
+Feel free to use it for whatever *internal* tests you can imagine.
+
+
+<dt><cite><LI>
+I got libExt. Can I replace all EMX headers with libExt one? 
+
+<dd></cite>
+Yes. They should be backwards compatible. Report any problems.
+To put it more precisely: They should be backwards _source_ compatible. 
+
+If you use our headers but _not_ use our library, well, you know, a lot of 
+exciting side effects are to be expected...  ;-)
+
+<dt><cite><LI>
+If yes, are you sure all will work ok?
+
+<dd></cite>
+I'm absolutely (100%) sure and I will fully guarantee this, provided
+you have already paid the full price for the libExt
+XXL-Super-Hyper-Software-Development-Kit. Price list on request.
+(PS.: Will e-mail with a 10Mbyte price list bounce?)
+
+
+<dt><cite><LI>
+I successfully downloaded CVS of libExt and was surprised not to
+see EMX in it at all.
+
+<dd></cite>
+We cannot merge libext and emx on the long run because of different
+licenses. We will use a BSD-style license. 
+Because of this we must cleanly separate both libraries. 
+
+	In general, our goal is full compatibility with 4.4 BSD, 
+to reuse as much 4.4 BSD Net/2 Release code as possible and to write
+our own kernel interfaces from scratch. So please consider remaining
+similarities to emx in _our_ code as being "fast'n dirty hacks" for
+testing purposes, only.
+
+<dt><cite><LI>
+But why can't we integrate libExt into EMX.
+
+<dd></cite>
+Because EMX is property of Eberhard Mattes and he has repeatedly
+rejected - for several years now and not without good reasons - to
+follow a route like our's. If he does not change his mind we will
+respect his decision and must and _will_ leave emx untouched. This will
+give you a choice: You can use the library interface _you_ need.
+
+To make it absolutely clear: Our intention of seamless Un*x integration
+on top of the OS/2 kernel is not any better or worse than emx's;
+it's only different! And it is incompatible. This does _not_ mean that 
+you cannot (and at this moment you even must do that) link against ANSI 
+streams and other utility functions in the opaque emx dll's. It means: 
+
+	We will not mix up the sources!
+
+<dt><cite><LI>
+I really do not want to mess with functions from different places and 
+want to keep them in 1 place ?
+
+<dd></cite>
+Yes, keep them in 1 place: libExt. Help us to write a complete
+and BSD compatible implementation. If you then specify 'gcc -lext' (_our_
+library before emx libs) on the linker command line, all stat references
+will be seamlessly resolved by _our_ library. Application programmers
+even won't notice what is actually happening; they will only notice
+that their Linux/SunOS/BSD sources now compile and run correctly. The
+relevant emx functions in the dll will not be linked in. Please
+remember: First specify, first resolve. And what has already been
+resolved cannot be re-resolved.
+
+<dt><cite><LI>
+Running a configure script (generated by autoconf/2) does not
+find functions provided by libExt?
+<dd></cite>
+Yes, in case you have libExt installed properly configure will
+succeed in detecting the appropriate headers, but to enable
+the library functions you need to patch autoconf/2 to
+link agains libExt by default.
+<br>
+Some time in future we may have a patched gcc frontend to
+do this job.
+</dl>
+
+
+<hr><h2>
+Assembler generation questions
+</h2>
+
+
+<dt><cite><LI>
+I get this when trying to compile the i387math module...
+</cite><pre>
+i387math.s: Assembler messages: [...]
+          ^^ Should not happen, we use a large 'S' here. 
+</pre>
+
+<dd></cite><pre>
+Cf.:
+
+GCC(1)                      GNU Tools                      GCC(1)
+
+
+       .s    Assembler source; assemble
+       .S    Assembler source; preprocess, assemble
+       .h    Preprocessor file; not usually named on command line
+
+
+  file.s 
+            Assembler code. 
+
+  file.S 
+            Assembler code which must be preprocessed. 
+
+  other 
+            An object file to be fed straight into linking. Any file
+name with no recognized suffix is treated this way.   
+  
+  You can specify the input language explicitly with the '-x' option:  
+
+
+  -x language 
+            Specify explicitly the language for the following input
+files (rather than letting the compiler choose a default based 
+            on the file name suffix).  This option applies to all
+following input files until the next '-x' option.  Possible values 
+            for language are: 
+            
+            c  objective-c  c++
+            c-header  cpp-output  c++-cpp-output
+            assembler  assembler-with-cpp
+
+</pre>
+The Makefile has this rule:
+<pre>
+  .S.o:
+	  $(CC) $(CFLAGS) -c $< -o $@
+
+</pre>
+
+Probably your make is broken and does mess up the rules. Try instead:
+
+<pre>
+  %.o:	%.S
+	  $(CC) $(CFLAGS) -c $< -o $@
+</pre>
+
+or use x11make.exe from XFree86/2.
+
+<dt><cite><LI>
+I use 'as.exe' from bintools of pgcc to make it understand MMX commands, but
+it is not working well: see example
+</cite><pre>
+
+  .global __imlib_get_cpuid
+     .type __imlib_get_cpuid,@function
+
+  __imlib_get_cpuid:
+     pushl %ebx
+     .......
+</pre>
+produces in .obj file _imlib_get_cpuid with one underscore! What to do?
+
+<dd></cite>
+Looks like you did not obey to the a.out symbol generation convention. On any box
+you can find out how symbol names are generated for use by your linker, just compile
+a sample: Look into the generated asm-output, search for underscores. Maybe you 
+might want to write a wrapper in C and include inline assembler instructions only 
+for those machine instructions that are unknown to pgcc/gcc. Examples in:
+
+	'libm/mathx.c.' 
+
+In this case you can employ typed variables and better ANSI type checking. 
+Moreover, the compiler takes care for you of optimizing and instruction 
+scheduling; do not forget to double-check the generated asm output, though. Or
+you can alternatively fix the asm code and prepend an additional underscore.
+
+</dl>
+
+
+<hr><h2>
+Timing questions
+</h2>
+
+
+<dt><cite><LI>
+What is HRTIMER.SYS? Part of Warp Server? Or is it available somewhere?
+
+<dd></cite>
+Search Hobbes for hrtimr11.zip. It is a  device driver implementing a high
+resolution timer. The author granted us the right to use, copy and modify his 
+sources for our project and asks for giving him due credits in the docs.
+See libext/test/usleep.c for detailed explanations.
+</dl>
+
+<hr><h2>
+Patches
+</h2>
+
+
+
+<dt><cite><LI>
+I want to submit patches. How to proceed.
+
+<dd></cite>
+Read docs/CodeRules.txt first! Then, first fix defective ASCII with fixtxt. 
+
+In toplevel (CVSROOT) directory:
+<ol>
+<li>Run make distclean! 
+<li>cvs -z4 update
+<li>cvs -z4 diff -udw &gt;diff.out
+</ol>
+
+</dl>
+
+
+<hr><h2>
+Docs
+</h2>
+
+
+
+<dt><cite><LI>
+I don't have a written documentation of the XYZ standard?! Heeelp!
+
+<dd></cite>
+Well, unfortunately often standard documentations are sold - probably to 
+prevent the community from using them ;-)
+We collect a growing list of links to "free" (i.e. no cost, might require 
+registration) programming &amp; standard references:
+
+  posix2/libext/docs/html/Standards.html
+
+A copy of this document should be on our website on SF.
+</dl>
+
+
+
+<hr><h2>
+Additions of other libraries
+</h2>
+
+
+
+<dt><cite><LI>
+Many libs use libJAIATIDNK wrapper for work - it can be easily added to 
+libEXT !?
+
+<dd></cite>
+Hmm, JAIATIDNK (Just Another Interesting Acronym That I Do Not Know ;-!> 
+Forgive my unpordonable ingnorance about all those 'You cannot live without 
+this latest and greatest library of the hour' acronyms. Can someone explain, 
+please?
+
+In general, we will integrate all libraries that are present as default libraries 
+in recent *BSD systems, especially OpenBSD (US-based *BSD systems often lack many 
+of them because of export restrictions). 
+I (aka the current maintainer) am willing to provide anything as an option 
+that people actually need (unsupported by me, of course) and are willing to 
+support, if you send me a nice (aka human readable) module/header.
+This is strictly for convenience and to have a central place to look for 
+libraries, so that people do not need to hunt around the net for all 
+(incompatible) versions of all (mutually incompatible) bits and peaces...
+</dl>
+
+<hr><h2>
+Misc
+</h2>
+
+
+
+<dt><cite><LI>
+Heeelp, BLURB.3bsd is unreadable. I want to learn about your fine system, but 
+while using Linux your manpage is unreadable.
+
+<dd></cite>
+Use a real operating system (*BSD) that does not imitate SYSV. The BSD authors
+would put it this way:
+<dd><cite>
+  The -man switch is stupid SYSV brain-damage, obsoleted since 4.0BSD! 
+  In new code use only the superior Berkeley 'doc' macros. If you absolutely must 
+  stay compatible with one-eyed fanatics of broken brain-damage, use the -mandoc 
+  switch.
+</cite>
+</dl>
+
+<hr><h2>
+libm
+</h2>
+
+
+
+<dt><cite><LI>
+I just tried out to figure out what's going wrong with multi-standard
+support in libm and found the following:
+>- dtestvec.exe apparently checks for correctness according to IEEE ??
+>	At least test what I suppose due to the result with
+>		-D_IEEE_LIBM.
+>- libm itselft is (was?) compiled with -D_MULTI_LIBM -D_POSIX_MODE which
+>	means that the code will go through some extra instructions to
+>	produce a result and an exception value which is claimed to be
+>	according to POSIX standard, but different from IEEE results.
+>  (e.g. if nan is returned by "acos", it checks if the argument had
+>	absolute value > 1 and if so, it sets the result to zero,
+>	exception type to DOMAIN, exception name to "acos" and in the
+>	POSIX case errno to EDOM; the result zero is obviously fully
+>	intentional, so I assume, it's posixly correct.)
+
+<dd></cite>
+As it seems, Posix avoids NAN (for VAX compatibility??), returns zero
+and sets errno. Let's try to discuss individual unexpected results:
+
+<ol>
+<li>
+<a name="acos"></name>
+</cite><pre>
+	acos (2.0000000000000000e+00) = 0.0000000000000000e+00
+	    should be nan
+	acos (-2.0000000000000000e+00) = 0.0000000000000000e+00
+	    should be nan
+	asin (2.0000000000000000e+00) = 0.0000000000000000e+00
+	    should be nan
+	asin (-2.0000000000000000e+00) = 0.0000000000000000e+00
+	    should be nan
+</pre>
+
+This is intentional: Avoid NAN, return 0 and set errno.
+
+<li>
+<a name="tanh"></name>
+(both for IEEE and POSIX version)
+</cite><pre>
+	tanh (-0.0000000000000000e+00) = 0.0000000000000000e+00
+	    should be -0.0000000000000000e+00
+</pre>
+
+Conformance module k_standard.c does not contain a special case. I think this is a bug; as s_tanh.c uses GET_HIGH_WORD(jx,x) macro, the bug may be in the macro or in the C file: With a fast look at it I do not see how the sign of the argument is preserved. Is this intentional?
+
+
+<li>
+<a name="log"></name>
+</cite><pre>
+	log (-1.0000000000000000e+00) = -inf
+	    should be nan
+	log10 (-1.0000000000000000e+00) = -inf
+	    should be nan
+</pre>
+
+Like for <a href="#acos">acos()</a>.
+
+
+<li>
+<a name="log1p"></name>
+(both for IEEE and POSIX version)
+</cite><pre>
+	log1p (-0.0000000000000000e+00) = 0.0000000000000000e+00
+	    should be -0.0000000000000000e+00
+</pre>
+
+I think, a bug in the S file: Not sign-preserving, much like 
+<a href="#tanh">tanh()</a>.
+
+<li>
+<a name="gamma"></name>
+</cite><pre>
+	gamma (-1.0000000000000000e+00) = inf
+	    should be nan
+	gamma (0.0000000000000000e+00) = inf
+	    should be nan
+	gamma (-inf) = inf
+	    should be nan
+</pre>
+
+Test is wrong here, remove test; cf. my previous mail.
+
+
+<li>
+<a name="atan2"></name>
+</cite><pre>
+	atan2 (-0.0000000000000000e+00, 0.0000000000000000e+00) =
+	0.0000000000000000e+00
+	    should be -0.0000000000000000e+00
+
+	atan2 (0.0000000000000000e+00, -0.0000000000000000e+00) =
+	0.0000000000000000e+00
+	    should be 3.1415926535897931e+00
+
+	atan2 (-0.0000000000000000e+00, -0.0000000000000000e+00) =
+	0.0000000000000000e+00
+	    should be -3.1415926535897931e+00
+</pre>
+
+Like <a href="#acos">acos</a>.
+
+
+<li>
+<a name="pow"></name>
+</cite><pre>
+	pow (0.0000000000000000e+00, -3.0000000000000000e+00) = -inf
+	    should be inf
+	pow (0.0000000000000000e+00, -5.0000000000000000e-01) = -inf
+	    should be inf
+	pow (-0.0000000000000000e+00, -5.0000000000000000e-01) = -inf
+	    should be inf
+</pre>
+
+</ol>
+
+Intentional behaviour for standard conformance. Yet rather strange...
+
+
+So in summary: Bugs are in (<a href="#acos">acos</a>) and
+(<a href="#log1p">log1p()</a>). The rest is strange but conforming.
+
+We should avoid 
+</cite><pre>
+tanh (-0.0000000000000000e+00) = 0.0000000000000000e+00
+    should be -0.0000000000000000e+00
+log1p (-0.0000000000000000e+00) = 0.0000000000000000e+00
+    should be -0.0000000000000000e+00
+</pre>
+
+</dl>
+</UL>
+</body>
+</html>
+

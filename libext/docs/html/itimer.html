@@ -1,0 +1,100 @@
+<html>
+
+<head>
+<title>xfreeos2: cat&amp;mouse / setitimer</title>
+</head>
+<body bgcolor=#ffffff>
+<img src=""><p>
+<h1>cat&amp;mouse / setitimer</h1>
+Holger Veit (<i>Holger.Veit@gmd.de</i>)<br>
+<i>Sat, 13 Sep 1997 20:59:31 +0200 (MET DST)</i>
+<p>
+<ul>
+<li> <b>Messages sorted by:</b> <a href="date.html#2291">[ date ]</a><a href="index.html#2291">[ thread ]</a><a href="subject.html#2291">[ subject ]</a><a href="author.html#2291">[ author ]</a>
+<!-- next="start" -->
+<li> <b>Next message:</b> <a href="2292.html">Faye Pearson: "[XFreeOS2] CL-GD 5446 more information"</a>
+<li> <b>Previous message:</b> <a href="2290.html">Anssi Saari: "Re: [XFreeOS2] Font problem with 3.3.1"</a>
+<!-- nextthread="start" -->
+</ul>
+<!-- body="start" -->
+Re: [XFreeOS2] MIT shm<br>
+<br>
+Rodney R. Korte (rkorte@psu.edu)<br>
+Mon, 29 Dec 1997 10:39:30 +0100 (MET) <br><br>
+<br>
+[set/getitimer stuff]<br>
+> I ran into this problem with the xpilot server. I worked up<br>
+> two work-arounds for it: 1) use a semaphore, a timer, and another<br>
+> thread as you describe; 2) use a second thread and just call <br>
+> DosSleep( ), then do something.<br>
+> 
+> Neither solution is satisfactory if you need decent accuracy <br>
+> below 1/10 second, IMO, as is required in the xpilot server. <br>
+<br>
+I think this applies only to high-speed games like your xpilot, <br>
+Enlightment is unlikely to have this problem. <br>
+<br>
+[...] <br>
+> I think that to do an itimer bit, emx will have to use <br>
+> the new high-resolution timer device driver stuff developed <br>
+> by Timur Tabi for multimedia I/O, which I believe is also in <br>
+> Warp 4 now. This should be a good subject for the EMX list. <br>
+<br>
+This is something that - if at all - should be a part of the <br>
+EMX runtime system, because this timer is a scarce resource, and <br>
+mustn't be allocated exclusively. <br>
+<br> 
+> I'm not on it, but perhaps other interested parties should <br>
+> poke around there for a discussion on this topic? Maybe EM <br>
+> has committed to (or refused to do) this project already. <br>
+<br>
+Not that I am aware of (that it has been discussed already). <br>
+You'll now find a small port of oneko on the ported software page, which is<br>
+the well-known cat hunting the mouse cursor. I've ported this as a quickie<br>
+mainly to demonstate how one can replace common occurrences of setitimer(2)<br>
+which was asked some days ago in this list.<br>
+To explain how it works here, see the source code (<a href="ftp://set.gmd.de/pub/misc/XFree86OS2/ports/oneko-1.1.tgz">ftp://set.gmd.de/pub/misc/XFree86OS2/ports/oneko-1.1.tgz</a>)<br>
+and the diffs (in the oneko.zip file):<br>
+<p>
+setitimer was used here to produce a periodic SIGALRM event faster than 1 sec.<br>
+I replaced the setitimer call with a beginthread which runs in an endless<br>
+loop (if this periodic timer is to be stopped in some other application,<br>
+you have to end such a thread somehow, of course):<br>
+	void itimerthread(void* dummy) {<br>
+		while(1) {<br>
+			_sleep2(numer_of_milliseconds);<br>
+			/* call SIGALRM handler */<br>
+			itimerflag = 1; /* see below */<br>
+		}<br>
+	}<br>
+This thread _sleep2's for the specified interval time and would then call<br>
+the signal function which is called by a SIGALRM signal. In this example,<br>
+this is a no-op, because the side effect of SIGALRM is used here. Somewhere<br>
+in the code is a pause() call, which waits until a signal happens. I<br>
+replaced this pause() with a wait for a variable (an OS/2 semaphore would be<br>
+cleaner, but this here is not critical):<br>
+	while (itimerflag==0) DosSleep(0); /* could be DosSleep(1) as well? */<br>
+	itimerflag = 0;<br>
+and added a itimerflag=1 (see above) after the _sleep2 in the itimer thread.<br>
+This will animate the neko cat.<br>
+<p>
+Such a mechanism might be worthwhile in many ports, maybe some of you can use<br>
+it.<br>
+<p>
+<pre>
+-- 
+         Dr.-Ing. Holger Veit             | INTERNET: Holger.Veit"at"gmd.de
+|  |   / GMD - German National Research   | Phone: (+49) 2241 14 2448
+|__|  /  Center for Information Technology| Fax:   (+49) 2241 14 2242
+|  | /   Schloss Birlinghoven             |  Get XFree86/OS2 Bugfix Version
+|  |/    D-53754 Sankt Augustin, Germany  |    V3.3.1 from ftp.xfree86.org
+         WWW: <a href="http://borneo.gmd.de/~veit/">http://borneo.gmd.de/~veit/</a> | /pub/XFree86/3.3.1/binaries/OS2
+</pre>
+<!-- body="end" -->
+<p>
+<ul>
+<!-- next="start" -->
+<li> <b>Next message:</b> <a href="2292.html">Faye Pearson: "[XFreeOS2] CL-GD 5446 more information"</a>
+<li> <b>Previous message:</b> <a href="2290.html">Anssi Saari: "Re: [XFreeOS2] Font problem with 3.3.1"</a>
+<!-- nextthread="start" -->
+</ul>

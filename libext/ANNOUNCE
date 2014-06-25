@@ -1,0 +1,122 @@
+In the following you will read about a project which aims to help
+people in porting and writing portable software on OS/2.
+
+
+Current Situation:
+=================
+
+While most commercial software development for OS/2 has stopped (except 
+important server-only and large-scale solutions, though) the "open source"
+movement currently gains momentum. For most remaining individual OS/2 users and
+developers it is essential to profit from this momentum in the best possible
+way. 
+
+For many years emx has been the working horse here: Not only because of it's 
+gcc port. Essentially because of it's highly portable, largely open standards 
+conformant C Library. This one has proved reliability and excellence. Let us
+try to extend it slowly, implementing those interfaces _we_ have always been 
+missing without reducing stability, slickness and performance. Like EMX itself
+it should well serve as an example of good software engineering.
+In the following we outline an approach which follows a well known
+theorem from physics: the "least action principle": in our opinion the
+low resource demands makes this project likely to succeed!
+
+
+The idea:
+========
+
+Our idea focusses on three independent steps: 
+
+1. Collect already existing ported APIs and subsets and make a quite usable
+   and well documented extension library of it, that can be improved upon and 
+   heavily tested, independently from emx. 
+
+2. Create a Posix-conformant file-system wrapper using a _posixRedirRoot()-
+   function very similar to the existing __XOS2RedirRoot() interface of
+   XFree86OS/2 as well as a BSD-Unix-style (<paths.h>) mechanism for remapping
+   hardcoded path-names. Other ideas (not necessarily from the authors here)
+   include an internal database to simulate symlinks, and perhaps one
+   should have a look at TVFS here.
+
+3. Merge all those efforts into a single distribution that is upwards-compatible
+   to already existing emx-software and that would (eventually) pass all tests
+   for official Posix-conformance.
+   We would not limit the scope to POSIX.1 but include a selection of system
+   calls from The Single Un*x Specifications (Unix 95/98) as well as
+   traditional SYSV and BSD interfaces.
+
+
+What to do:
+==========
+
+As a first step we'd like to know from each other if people want to contribute 
+here and if so what they have to 'offer'. Let us set up a mutual coordination 
+of past individual efforts to merge them to a quite usable single library.
+Many complicated work has alread been done, namely to support the forthcoming 
+XFree86OS/2 4.0. You might already have implemented other complicated and
+missing API's. 
+Contribute them, please!
+And feel free to criticise and to stress test what we already can offer.
+
+Then we might have to discuss the license issue:  A license more liberal than 
+(L)GPL would be nice, since we don't want to limit usage more than necessary.
+This does not exclude a non-liability-disclaimer and individual copyright
+notices. If possible we might agree on a having an unique license
+for the whole package.
+At least the small collection we are offering in a package called 
+'libextensions' (working title) is Public Domain, except some (L?)GPL stuff.
+This will be removed eventually.
+
+Finally we have to address the topic what to do with our work:
+for some reasons it is not obvious whether it can be simply added 
+to the public EMX distribution ...
+
+
+What we have:
+============
+
+We have already collected a few implementations for "frequently missing APIs"
+upon porting: including math and random number functions,
+dlopen(), fchmod(), g/sitimer(),  usleep(), etc.
+To be prepared for possible future enhancements we meanwhile also
+provide stubs for functions which have no real counterparts on
+OS/2 yet. This clearly superceeds the approach of 
+#whatunixhas (0)  /* and we on OS/2 don't have at all:-( */
+
+
+An important statement:
+========================
+
+Since we marked our code as Public Domain it should be clear that 'we' do
+not intend to make advertisement with your hard work claiming it would be
+'our' effort (only ;-).
+The goal is only to get EMX (or any similar project) ready for porting more
+software out of the box!
+
+
+Organizational stuff:
+====================
+
+We're primarily looking for people which actually will contribute
+code. Especially since this little project shouldn't go 'fully public'
+(i.e. upload to a site like Hobbes) unless a certain level of quality
+and quantity is reached.
+No, not the full Unix98 API list has to be done before ;-)
+
+Since we've learned from many projects that users (like on xfreeos2@)
+get upset when too much technical stuff is discussed we have set up
+a new mailinglist:
+  posix2@borneo.gmd.de
+is available for discussing this project.
+Send subscribe requests to 
+  majordomo@borneo.gmd.de
+(they will be forwarded to the list owner for approval)
+
+
+Thanks and Bye,
+
+-- 
+Arnd Hanses,
+Alexander Mai,
+Holger Veit
+

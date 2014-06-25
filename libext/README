@@ -1,0 +1,113 @@
+[$Header: /cvsroot/posix2/posix2/libext/README,v 1.7 2000/11/25 16:33:35 arnd Exp $]
+
+LibExt:
+** A Fine Selection of Missing Un*x-style Interfaces for emx/gcc :-) **
+
+
+
+
+			Dedication:
+			===========
+			The lbxproxy program has various options, 
+			all of which are optional.
+                                                      -- lbxproxy(1)
+
+
+
+Warning: This is not a release version. 
+
+Distribution is prohibited, unless you accept and impose on all users the 
+following conditions:
+
+1) This is an experimental alpha stadium library which will cause severe problems 
+   or even considerable damage, if I am not experienced enough to handle 
+   experimental code.
+   I will use the library for testing purposes only, after previous subscription 
+   to:
+	posix2@borneo.gmd.de
+
+    More info:
+
+	http://posix2.sourceforge.net/
+
+   Requests will be forwarded to the list owner for approval.
+
+2) I am asked to report all outstanding bugs and send fixes to posix2@borneo.gmd.de. This is not an obligation.
+
+
+For more info please read the text/header files. You can find them in:
+
+	include/* and docs/*.txt, docs/html/*.html
+
+The source file and directory structure closely follows common standard headers;
+assuming familiarity with them, this provides for quick orientation. Please consult
+the respective Makefiles for manual configuration options.
+
+Note: stdlib.h, sys/stat.h, etc. replace the emx version: Some prototypes of bsd 
+functions have changed with the newer version used here; struct stat has been
+changed for bsd compatibility.
+
+If source- and headerfiles do not explicitly state a restrictive copyright, 
+the code is put into public domain. Commercial usage is encouraged.
+Feedback, bug fixes, moral support, success notes (or donations of any form ;-), is
+always welcome. Please send us your own improved implementations of Posix or 
+X/Open interfaces, so that we can include them into our collection.
+
+	A. Hanses <Arnd.H.Hanses@rz.ruhr-uni-bochum.de>
+	A. Mai <st002279@hrzpub.tu-darmstadt.de>
+
+
+Note: You must not override Makefile variables in your environment.
+ It seems LIB in config.sys is a major culprit in compilation. So,
+ if you experience problems:
+ 
+ Write a make.cmd to 'set LIB=', to set up the correct environment
+ paths for includes, etc. and to invoke x11make or gmake: And now it
+ should work.
+
+
+Note: Inlining of some functions is done by default and needs gcc 2.8.x or 
+above. To disable, use '-fno-inline' switch. To use with -Zomf or *.lib do not 
+forget to 
+
+	SET LINK386=/NOIGNORECASE
+
+To run all tests just run 'gmake run'. You may want to investigate the 
+following DEBUG flags (cf. Makefile):
+
+-DTHREAD_EXPERIMENTAL -DDEBUG -D_DEBUG -D_USE_HRTIMER_SYS -DGNUFNS 
+
+Grep the sources to learn what they are doing.
+
+The included math library is Sun's freely distributable libm with additional patches
+and fixes by NetBSD/OpenBSD and some more fixes. By default it behaves posixly 
+correct, but you can choose at runtime another behaviour, e.g. barebone IEEE:
+
+  _LIB_VERSION = _IEEE_;
+
+Read math.h and libm/Makefile for details.
+
+Limitations: 
+
+ o fstat() is quite restricted, compared to stat(). Fix me!
+
+ o math stuff is partly untested. Test me!
+
+For functions look into c.exp, etc.:
+
+More Info:
+=========
+
+Please refer to any common tutorial dealing with portable Posix/U*ix 
+programming. U*ix/BSD or Linux manual pages are often indispensable.
+
+Documentation in docs/*.txt and docs/*.html. Manual pages in docs/man/man*.
+
+The various test programs are not meant as usage examples; nevertheless
+you can find some useful hints there and in the top-level Makefile. 
+Please feel free to add more tests for other pathological cases.
+
+Link with: 
+
+-Zmtd -Zbsd-signals -Lpath_to_library -lapplication_libs -lcExt -lstcExt -lsocket
+
